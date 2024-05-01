@@ -1,5 +1,5 @@
 export default async function sitemap() {
-  const baseUrl = "https://biznouserapp.vercel.app";
+  const baseUrl = "https://tutorial-app-phi.vercel.app";
 
   console.log("Calling getpublishedblogs API...");
 

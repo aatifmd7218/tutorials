@@ -15,7 +15,7 @@ export default function BlogLayout({ children }) {
   useEffect(() => {
     const getfaviconimage = async () => {
       try {
-        const baseUrl = "https://biznouserapp.vercel.app";
+        const baseUrl = "https://tutorial-app-phi.vercel.app";
         const response = await fetch(baseUrl + "/api/combinedapi", {
           method: "POST",
           headers: {

@@ -3,7 +3,7 @@ import GetSubTopicBySlug from "@/components/subtopic/GetSubTopicBySlug";
 export async function generateMetadata({ params }) {
   const { subtopicslug } = params;
   try {
-    const baseUrl = "http://localhost:3000";
+    const baseUrl = "https://tutorial-app-phi.vercel.app";
     const response = await fetch(baseUrl + "/api/combinedapi", {
       method: "POST",
       headers: {
