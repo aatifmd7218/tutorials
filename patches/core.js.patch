@@ -1,0 +1,15 @@
+--- /node_modules/suneditor/src/lib/core.js.orig	2024-04-14 19:36:28.560431000 +0530
++++ /node_modules/suneditor/src/lib/core.js	2024-04-14 21:46:26.461642900 +0530
+@@ -1162,10 +1162,10 @@
+          * @returns {Node}
+          */
+         getSelectionNode: function () {
+-            if (!context.element.wysiwyg.contains(this._variable._selectionNode)) this._editorRange();
++            if(!context.element.wysiwyg.contains(this._variable._selectionNode))this._editorRange();
+             if (!this._variable._selectionNode) {
+                 const selectionNode = util.getChildElement(context.element.wysiwyg.firstChild, function (current) { return current.childNodes.length === 0 || current.nodeType === 3; }, false);
+-                if (!selectionNode) {
++                if (!selectionNode){
+                     this._editorRange();
+                 } else {
+                     this._variable._selectionNode = selectionNode;
