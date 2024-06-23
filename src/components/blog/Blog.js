@@ -2,9 +2,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Prism from "prismjs";
 
 export default function Blog({ blog }) {
   const [imageData, setImageData] = useState(null);
+  const [clientContent, setClientContent] = useState("");
+
+  useEffect(() => {
+    setClientContent(blog.content);
+    Prism.highlightAll();
+  }, [blog.content]);
 
   useEffect(() => {
     async function fetchImage() {
@@ -70,10 +77,13 @@ export default function Blog({ blog }) {
               </div>
             </div> */}
             {blog.content && (
-              <p
-                className="text-justify text-gray-600 text-base font-normal leading-8"
-                dangerouslySetInnerHTML={{ __html: blog.content }}
-              ></p>
+              <div className="w-full">
+                <div
+                  className="text-justify text-gray-600 text-base font-normal leading-8 w-full"
+                  style={{ overflow: "hidden" }}
+                  dangerouslySetInnerHTML={{ __html: clientContent }}
+                />
+              </div>
             )}
             {/* <p className="text-justify text-gray-600 text-base font-normal leading-8">{blog.content}</p> */}
           </div>

@@ -72,3 +72,29 @@ main {
     font-size: 85%;
   }
 }
+
+code {
+  /* font-family: "Courier New", Courier, monospace !important; */
+  /* background-color: #2e2e2e !important; */
+  color: #ffffff !important;
+  white-space: pre-wrap; /* Preserve whitespace */
+  word-wrap: break-word; /* Break long words */
+}
+
+pre {
+  white-space: pre-wrap; /* Preserve whitespace */
+  word-wrap: break-word; /* Break long words */
+}
+
+div {
+  white-space: pre-wrap; /* Preserve whitespace for divs */
+}
+
+ul {
+  list-style: disc; /* Ensure the list style is set to disc */
+  margin-left: 17px; /* Adjust margin for proper indentation */
+}
+
+li {
+  margin-bottom: 25px; /* Optional: add some space between list items */
+}

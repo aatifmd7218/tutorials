@@ -1,5 +1,35 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  async headers() {
+    return [
+      {
+        // Apply these headers to all routes except `/contactus`.
+        source: "/((?!contactus).*)",
+        headers: [
+          {
+            key: "Cross-Origin-Opener-Policy",
+            value: "same-origin",
+          },
+          {
+            key: "Cross-Origin-Embedder-Policy",
+            value: "require-corp",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: `
+            default-src 'self';
+            script-src 'self' 'unsafe-eval' 'unsafe-inline';
+            style-src 'self' 'unsafe-inline' https://unpkg.com;
+            font-src 'self' https://unpkg.com;
+            img-src 'self' data:;
+            connect-src 'self' https://unpkg.com;
+              frame-src 'self' https://www.google.com https://maps.google.com;
+            `.replace(/\n/g, ""), // CSP rules for allowing external resources from unpkg
+          },
+        ],
+      },
+    ];
+  },
   redirects: async () => {
     return [
       {
