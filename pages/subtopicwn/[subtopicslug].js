@@ -29,7 +29,7 @@ export default function SubTopicWnPage({ subTopicData, content }) {
 
   const [theme, setTheme] = useState("okaidia");
   const meta = {
-    title: "Prism with Next.js",
+    title: "Blog App",
     description:
       "Example using Prism / Markdown with Next.js including switching syntax highlighting themes.",
     cardImage:
