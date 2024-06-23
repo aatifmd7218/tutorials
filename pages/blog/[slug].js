@@ -12,6 +12,7 @@ export async function getServerSideProps({ params }) {
     console.log("params", params);
     const { slug } = params;
     let blog = await fetchBlogData(slug);
+    console.log("blog", blog);
     return {
       props: { blog },
     };
