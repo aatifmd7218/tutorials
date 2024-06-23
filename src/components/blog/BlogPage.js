@@ -6,6 +6,7 @@ import UserProfile from "@/components/blog/UserProfile";
 import FollowMe from "@/components/blog/FollowMe";
 import FeaturedPosts from "@/components/blog/FeaturedPosts";
 import Pagination from "../../../CommonElements/Pagination";
+import Navbar from "../Navbar/Navbar";
 
 const BlogPage = () => {
   const [blogData, setBlogData] = useState([]);
@@ -51,6 +52,7 @@ const BlogPage = () => {
   return (
     <>
       <main>
+        <Navbar />
         <div className="mx-auto max-w-2xl px-6 py-10 sm:px-8 sm:py-16 lg:max-w-7xl ">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-10 sm:gap-x-10">
             <div className="col-span-8">
