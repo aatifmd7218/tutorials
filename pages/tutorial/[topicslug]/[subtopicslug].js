@@ -6,8 +6,8 @@ import Navbar from "@/components/Navbar/Navbar";
 import UserProfile from "@/components/blog/UserProfile";
 import FollowMe from "@/components/blog/FollowMe";
 import FeaturedPosts from "@/components/blog/FeaturedPosts";
-import { fetchSubTutorialsBySubtopic } from "../../lib/fetchSubTutorialsBySubtopic";
 import Footer from "@/components/footer/Footer";
+import { fetchSubTutorialsBySubtopic } from "../../../lib/fetchSubTutorialsBySubtopic";
 
 export async function getServerSideProps({ params }) {
   try {
