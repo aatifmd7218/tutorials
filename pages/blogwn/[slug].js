@@ -5,7 +5,7 @@ import Blog from "@/components/blog/Blog";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { fetchBlogData } from "../../lib/fetchBlogData";
-import Layoutwn from "~/components/Layoutwn";
+import Layoutwn from "../../components/Layoutwn";
 
 export async function getServerSideProps({ params }) {
   try {

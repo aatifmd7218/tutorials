@@ -7,8 +7,8 @@ import UserProfile from "@/components/blog/UserProfile";
 import FollowMe from "@/components/blog/FollowMe";
 import FeaturedPosts from "@/components/blog/FeaturedPosts";
 import Blog from "@/components/blog/Blog";
-import { fetchSubTutorialsData } from "~/lib/fetchSubTutorialsData";
-import { fetchTutorialStatus } from "~/lib/fetchTutorialStatus";
+import { fetchSubTutorialsData } from "../../lib/fetchSubTutorialsData";
+import { fetchTutorialStatus } from "../../lib/fetchTutorialStatus";
 import Footer from "@/components/footer/Footer";
 
 export async function getServerSideProps({ params }) {
