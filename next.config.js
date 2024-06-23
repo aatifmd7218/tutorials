@@ -4,7 +4,7 @@ const nextConfig = {
     return [
       {
         // Apply these headers to all routes except `/contactus`.
-        source: "/((?!contactus).*)",
+        source: "/((?!contactus|blog|blogwn).*)",
         headers: [
           {
             key: "Cross-Origin-Opener-Policy",
