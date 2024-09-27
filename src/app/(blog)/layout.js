@@ -12,26 +12,26 @@ const montserrat = Montserrat({
 
 export default function BlogLayout({ children }) {
   const [faviconImageUrl, setFaviconImageUrl] = useState("");
-  // useEffect(() => {
-  //   const getfaviconimage = async () => {
-  //     try {
-  //       const baseUrl = "https://tutorial-app-phi.vercel.app";
-  //       const response = await fetch(baseUrl + "/api/combinedapi", {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify({ apiName: "getfavicon" }),
-  //       });
+  useEffect(() => {
+    const getfaviconimage = async () => {
+      try {
+        const baseUrl = "https://tutorials-fawn-omega.vercel.app";
+        const response = await fetch(baseUrl + "/api/combinedapi", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ apiName: "getfavicon" }),
+        });
 
-  //       const { result } = await response.json();
-  //       setFaviconImageUrl(result?.image);
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   };
-  //   getfaviconimage();
-  // }, []);
+        const { result } = await response.json();
+        setFaviconImageUrl(result?.image);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+    getfaviconimage();
+  }, []);
   return (
     <html lang="en" className="h-full bg-[#f2f2f2]">
       <head>
