@@ -3,7 +3,7 @@ import GetBlogBySlug from "@/components/blogwn/GetBlogBySlug";
 export async function generateMetadata({ params }) {
   const { slug } = params;
   try {
-    const baseUrl = "https://tutorial-app-phi.vercel.app";
+    const baseUrl = "https://tutorials-fawn-omega.vercel.app";
     console.log("slug", slug);
     const response = await fetch(baseUrl + "/api/getblog", {
       method: "POST",
@@ -40,7 +40,7 @@ export async function generateMetadata({ params }) {
 
 export async function generateStaticParams() {
   try {
-    const baseUrl = "https://tutorial-app-phi.vercel.app";
+    const baseUrl = "https://tutorials-fawn-omega.vercel.app";
 
     const response = await fetch(baseUrl + "/api/getpublishedblogs", {
       method: "GET",

@@ -4,7 +4,7 @@ import Career1 from "@/components/contact/Career1";
 import Hero1 from "@/components/contact/Hero";
 
 export const metadata = {
-  metadataBase: new URL("https://tutorial-app-phi.vercel.app/"),
+  metadataBase: new URL("https://tutorials-fawn-omega.vercel.app/"),
   keywords: ["Hey Blog User", "Top Location Blogs", "Top Blogs", "Blogs"],
   title: {
     default: "Contact Page",

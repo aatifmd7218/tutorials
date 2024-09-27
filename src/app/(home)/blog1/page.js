@@ -1,7 +1,7 @@
 import BlogPage from "@/components/blog/BlogPage";
 
 export const metadata = {
-  metadataBase: new URL("https://tutorial-app-phi.vercel.app/"),
+  metadataBase: new URL("https://tutorials-fawn-omega.vercel.app/"),
   keywords: ["Hey Blog User", "Top Location Blogs", "Top Blogs", "Blogs"],
   title: {
     default: "Blog Page",
