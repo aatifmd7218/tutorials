@@ -13,12 +13,11 @@ import Capabilities1 from "@/components/home/Capabilities";
 import Showcase1 from "@/components/home/Showcase";
 import WebAndMobile1 from "@/components/home/WebAndMobile";
 import Clients1 from "../components/home/Clients";
-import Leads1 from "../../CommonElements/Leads";
 import Testimonial1 from "@/components/home/Testimonial";
 import MapAndAddress1 from "../../CommonElements/MapAndAddress";
 import Careers1 from "@/components/home/Careers";
 import Footer from "@/components/footer/Footer";
-import { useEffect } from "react";
+
 
 const leadshome2 = [
   {

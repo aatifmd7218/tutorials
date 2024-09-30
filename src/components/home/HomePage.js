@@ -13,7 +13,6 @@ import Showcase1 from "@/components/home/Showcase";
 import WebAndMobile1 from "@/components/home/WebAndMobile";
 import Testimonial1 from "@/components/home/Testimonial";
 import Careers1 from "@/components/home/Careers";
-
 import Capabilities21 from "@/components/home/Capabilities2";
 import PlayVideo1 from "@/components/home/PlayVideo";
 import Services1 from "@/components/home/Services";
@@ -24,40 +23,6 @@ import Awards from "@/components/home/Awards";
 import Collaborate from "@/components/home/Collaborate";
 import MapAndAddress1 from "../../../CommonElements/MapAndAddress";
 import Clients1 from "./Clients";
-
-const leadsAbout1 = [
-  {
-    count: 28,
-    icon: "bi-box-fill",
-    title: "designers and developers",
-    description:
-      "ur clients describe us as a product team which creates amazing UI/UX, by crafting top-notch UX.",
-  },
-  {
-    count: 345,
-    icon: "bi-pentagon-half",
-    title: "awards for digital innovation",
-    description:
-      "We’ve structured our workflow processes were from the funny the century rather.",
-  },
-];
-
-const leadshome2 = [
-  {
-    count: 28,
-    icon: "bi-box-fill",
-    title: "designers and developers",
-    description:
-      "Using year-over-year approaches and the latest technologies, we will ensure that your new website will be visible, accessible, and treads lightly.",
-  },
-  {
-    count: 35,
-    icon: "bi-pentagon-half",
-    title: "awards for digital innovation",
-    description:
-      "We’ve structured our workflow processes were from the funny the century rather, initial all the made, have spare to negatives.",
-  },
-];
 
 const HomePage = () => {
   const transactionTextContent = {

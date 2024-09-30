@@ -20,7 +20,7 @@ export async function getServerSideProps({ params }) {
     return { notFound: true };
   }
 }
-
+//
 export default function BlogPage({ blog }) {
   const [isAdmin, setIsAdmin] = useState("N");
   const [userId, setUserId] = useState();
