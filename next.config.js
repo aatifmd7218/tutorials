@@ -21,7 +21,7 @@ const nextConfig = {
               script-src 'self' 'unsafe-eval' 'unsafe-inline'; 
               style-src 'self' 'unsafe-inline' https://unpkg.com; 
               font-src 'self' https://unpkg.com; 
-              img-src 'self' data:; 
+              img-src 'self' data: https://tutorials-fawn-omega.vercel.app/; 
               connect-src 'self' https://unpkg.com ; 
               frame-src 'self' https://www.google.com https://maps.google.com;
             `.replace(/\n/g, ""), // CSP rules for allowing external resources from unpkg
