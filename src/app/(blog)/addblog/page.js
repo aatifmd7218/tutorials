@@ -1,6 +1,5 @@
 "use client";
-import React from "react";
-import { useState, useRef, useEffect, forwardRef } from "react";
+import React, { useState, useEffect } from "react";
 import "suneditor/dist/css/suneditor.min.css";
 import dynamic from "next/dynamic";
 import SideNav from "@/components/sidebar/SideNav";
@@ -14,20 +13,18 @@ const AddBlog = () => {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImage] = useState("");
+  const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState("");
   const [published, setPublished] = useState("N");
   const [users, setUsers] = useState([]);
   const [selectedUserName, setSelectedUserName] = useState("");
-  const [formSubmitted, setFormSubmitted] = useState();
+  const [formSubmitted, setFormSubmitted] = useState(false);
   const [featuredPost, setFeaturedPost] = useState("");
 
   const { data: session, status } = useSession();
+  const [isAdmin, setIsAdmin] = useState(false);
 
-  const handleFeaturedPostChange = (event) => {
-    setFeaturedPost(event.target.value);
-  };
-
+  // Fetch users on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -40,10 +37,11 @@ const AddBlog = () => {
 
         const { error, result } = await response.json();
 
-        if (error !== undefined) {
+        if (error) {
           console.log("Users Get error:", error);
+        } else {
+          setUsers(result);
         }
-        setUsers(result);
       } catch (error) {
         console.error("Users Get operation error", error);
       }
@@ -51,8 +49,22 @@ const AddBlog = () => {
     fetchData();
   }, []);
 
+  // Determine if user is admin or employee
+  useEffect(() => {
+    if (status === "loading") return;
+
+    if (session?.user) {
+      if (session.user.name === "admin") {
+        setIsAdmin(true);
+      } else {
+        setIsAdmin(false);
+        setSelectedUserName(session.user.username); // Automatically assign to self
+      }
+    }
+  }, [session, status]);
+
   if (status === "loading") {
-    return <div></div>;
+    return <div>Loading...</div>;
   }
 
   if (!session) {
@@ -65,25 +77,49 @@ const AddBlog = () => {
 
   const handleImageChange = (e) => {
     const selectedFile = e.target.files[0];
-    setImage(selectedFile);
-    setImageName(selectedFile ? selectedFile.name : ""); // Set the file name
+    if (selectedFile) {
+        setImage(selectedFile);
+        setImageName(selectedFile.name);
+    } else {
+        setImage(null);
+        setImageName("");
+    }
+};
+
+  const handleFeaturedPostChange = (event) => {
+    setFeaturedPost(event.target.value);
   };
 
   const handleAddBlog = async (e) => {
-    try {
-      e.preventDefault();
-      setFormSubmitted(true);
+    e.preventDefault();
+    setFormSubmitted(true);
 
+    try {
+      
       setTimeout(async () => {
-        const selectedUser = users.find(
-          (user) => user.username === selectedUserName
-        );
-        setPublished("N");
+        // If admin, find the selected user
+        // If employee, assign to self
+        const selectedUser = isAdmin
+          ? users.find((user) => user.username === selectedUserName)
+          : session.user; // Assign to self
+
+
+          if (!selectedUser) { // Added check for selectedUser
+            console.log("Invalid user type or no user selected.");
+            setFormSubmitted(false);
+            return;
+          }
+
+
+        setPublished("N"); // Or set to "Y" based on your requirement
+
         const formData = new FormData();
         formData.append("title", title);
         formData.append("desc", desc);
         formData.append("content", content);
-        formData.append("image", image);
+        if (image) {
+          formData.append("image", image);
+        }
         formData.append("published", published);
         formData.append("authorId", selectedUser.id);
         formData.append("featuredPost", featuredPost);
@@ -91,23 +127,29 @@ const AddBlog = () => {
         const response = await fetch("/api/addblog", {
           method: "POST",
           body: formData,
+          credentials: "include",
         });
 
         const { error, result } = await response.json();
 
-        if (error !== undefined) {
+        if (error) {
           console.log("Blog Added error:", error);
+        } else {
+          // Reset form fields
+          setTitle("");
+          setDesc("");
+          setContent("");
+          setImage(null);
+          setImageName("");
+          setFeaturedPost("");
+          setSelectedUserName(isAdmin ? "" : session.user.username);
+          window.location.href = "/allblogadmin"; // Redirect after success
         }
-        setTitle("");
-        setDesc("");
-        setContent("");
-        setImage("");
-        setImageName("");
-        window.location.href = "/allblogadmin";
         setFormSubmitted(false);
       }, 3000);
     } catch (error) {
       console.error("Blog addition operation error", error);
+      setFormSubmitted(false);
     }
   };
 
@@ -120,15 +162,15 @@ const AddBlog = () => {
           </div>
         </div>
       )}
-      <div className=" px-6 py-10 sm:px-8 sm:py-16 ">
+      <div className="px-6 py-10 sm:px-8 sm:py-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-10 sm:gap-x-10">
-          <div className=" col-span-3 space-y-10">
+          <div className="col-span-3 space-y-10">
             <SideNav />
           </div>
 
           <div className="col-span-9">
             <div className="card w-full bg-base-100 rounded-md">
-              <form className="card-body">
+              <form className="card-body" onSubmit={handleAddBlog}>
                 <h1 className="pt-4 text-center text-3xl font-semibold">
                   Add Blog Details
                 </h1>
@@ -141,16 +183,17 @@ const AddBlog = () => {
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="Blog Title"
                   className="mt-8 input input-bordered w-full placeholder-gray-500"
+                  required
                 />
 
                 <textarea
-                  type="text"
                   id="desc"
                   name="desc"
                   value={desc}
                   onChange={(e) => setDesc(e.target.value)}
                   className="textarea textarea-bordered placeholder-gray-500"
                   placeholder="Meta Description"
+                  required
                 ></textarea>
 
                 <DynamicSunEditor
@@ -160,7 +203,7 @@ const AddBlog = () => {
                   className="text-black"
                   height="300px"
                   setOptions={{
-                    height: "100%", // Use px unit for height
+                    height: "100%",
                     buttonList: [
                       ["undo", "redo"],
                       [
@@ -186,9 +229,9 @@ const AddBlog = () => {
                       ],
                       ["fontColor", "hiliteColor", "horizontalRule"],
                     ],
-                    font: ["Arial", "Courier New"], // Example: specify fonts
-                    fontColor: "red", // Set font color
-                    backgroundColor: "red", // Set background color
+                    font: ["Arial", "Courier New"],
+                    fontColor: "red",
+                    backgroundColor: "red",
                   }}
                 />
 
@@ -210,43 +253,39 @@ const AddBlog = () => {
                   onChange={handleFeaturedPostChange}
                   value={featuredPost || ""}
                   className="select select-bordered w-full"
+                  required
                 >
                   <option disabled value="">
-                    featured post?
+                    Featured post?
                   </option>
-                  <option>yes</option>
-                  <option>no</option>
-                  {featuredPost === "" && (
-                    <option disabled style={{ display: "none" }}>
-                      featured post?
-                    </option>
-                  )}
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
                 </select>
 
-                <select
-                  onChange={handleSelectChange}
-                  value={selectedUserName || ""}
-                  className="select select-bordered w-full"
-                >
-                  <option disabled value="">
-                    Assign to Employee?
-                  </option>
-                  {users.map((user) => (
-                    <option key={user.username}>{user.username}</option>
-                  ))}
-                  {selectedUserName === "" && (
-                    <option disabled style={{ display: "none" }}>
+                {isAdmin && (
+                  <select
+                    onChange={handleSelectChange}
+                    value={selectedUserName || ""}
+                    className="select select-bordered w-full"
+                    required
+                  >
+                    <option disabled value="">
                       Assign to Employee?
                     </option>
-                  )}
-                </select>
-
+                    {users.map((user) => (
+                      <option key={user.username} value={user.username}>
+                        {user.username}
+                      </option>
+                    ))}
+                  </select>
+                )}
                 <div className="flex justify-end">
                   <button
-                    onClick={handleAddBlog}
+                    type="submit"
                     className="btn bg-[#dc2626] w-20 text-white"
+                    disabled={formSubmitted}
                   >
-                    Save
+                    {formSubmitted ? "Saving..." : "Save"}
                   </button>
                 </div>
               </form>

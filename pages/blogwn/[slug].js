@@ -1,11 +1,8 @@
-import React from "react";
-// import { blogData } from "@/components/blog1/blogData"
-// import BlogLists from "@/components/blog1/BlogLists"
-import Blog from "@/components/blog/Blog";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { fetchBlogData } from "../../lib/fetchBlogData";
 import Layoutwn from "../../components/Layoutwn";
+import Blog from "@/components/blog/Blog";
 
 export async function getServerSideProps({ params }) {
   try {
@@ -20,12 +17,10 @@ export async function getServerSideProps({ params }) {
     return { notFound: true };
   }
 }
-//
-export default function BlogPage({ blog }) {
-  const [isAdmin, setIsAdmin] = useState("N");
-  const [userId, setUserId] = useState();
 
-  const [blogData, setBlogData] = useState({});
+export default function BlogPage({ blog }) {
+  const [isAdmin, setIsAdmin] = useState(false);  // Set as boolean
+  const [userId, setUserId] = useState(null);
 
   const { data: session, status } = useSession();
 
@@ -34,27 +29,32 @@ export default function BlogPage({ blog }) {
       return;
     }
 
-    setUserId(session?.user?.id);
-    if (session?.user?.name === "admin") {
-      setIsAdmin("Y");
+    if (session?.user) {
+      setUserId(session.user.id);
+      setIsAdmin(session.user.name === "admin");  // Boolean comparison for admin
+    } else {
+      setUserId(null);
+      setIsAdmin(false);
     }
   }, [session, status]);
 
   if (status === "loading") {
-    return <div></div>;
+    return <div>Loading...</div>; // Show loading while session is being fetched
   }
 
-  const canAccessContent = isAdmin === "Y" || blogData.author_id == userId;
+  const canAccessContent = isAdmin || blog.author_id === userId;  // Access allowed if admin or author
+
+  if(!session){
+    return <div>Access Denied</div>; 
+  }
 
   if (!canAccessContent) {
-    return <div>Access Denied</div>;
+    return <div>Access Denied</div>; // Show access denied if user is not allowed
   }
 
   return (
-    canAccessContent && (
-      <Layoutwn>
-        <Blog blog={blog} />
-      </Layoutwn>
-    )
+    <Layoutwn>
+      <Blog blog={blog} />
+    </Layoutwn>
   );
 }

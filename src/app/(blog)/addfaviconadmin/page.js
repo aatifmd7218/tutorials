@@ -90,7 +90,7 @@ const Page = () => {
 
                 <div className="flex justify-end">
                   <button
-                    onClick={handleAddFavicon}
+                    onSubmit={handleAddFavicon}
                     className="btn bg-[#dc2626] w-20 text-white"
                   >
                     Save

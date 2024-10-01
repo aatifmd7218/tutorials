@@ -17,12 +17,12 @@ const nextConfig = {
           {
             key: "Content-Security-Policy",
             value: `
-            default-src 'self';
-            script-src 'self' 'unsafe-eval' 'unsafe-inline';
-            style-src 'self' 'unsafe-inline' https://unpkg.com;
-            font-src 'self' https://unpkg.com;
-            img-src 'self' data:;
-            connect-src 'self' https://unpkg.com;
+              default-src 'self'; 
+              script-src 'self' 'unsafe-eval' 'unsafe-inline'; 
+              style-src 'self' 'unsafe-inline' https://unpkg.com; 
+              font-src 'self' https://unpkg.com; 
+              img-src 'self' data:; 
+              connect-src 'self' https://unpkg.com https://tutorials-fawn-omega.vercel.app; 
               frame-src 'self' https://www.google.com https://maps.google.com;
             `.replace(/\n/g, ""), // CSP rules for allowing external resources from unpkg
           },
@@ -87,9 +87,9 @@ const nextConfig = {
     ],
   },
 
-  experimental: {
-    serverActions: true,
-  },
+  // experimental: {
+  //   serverActions: true,
+  // },
 };
 
 module.exports = nextConfig;

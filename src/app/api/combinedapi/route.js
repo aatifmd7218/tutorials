@@ -6,14 +6,17 @@ import path from "path";
 import fetch from "node-fetch";
 import { put } from "@vercel/blob";
 
+
 const prisma = new PrismaClient();
 
 export const dynamic = "force-dynamic";
 
 async function deleteBlob(blobName) {
   const token =
-    "vercel_blob_rw_jUHo6lzVKmb7H9EZ_CKeKUeUhEEokt1LfN6xrmbbhpMkamB"; // Replace with your Vercel token
-  const projectId = "prj_tYSSNkO4oeejD8OAxFhmeRgyecqc"; // Replace with your Vercel project ID
+    "VvA3XP8hT39P2c1JQ2vfRhQJ"; 
+    
+    // Replace with your Vercel token
+  const projectId = "prj_0Ef6PmzBdYoW4aPREbzAk1ZTXIQy"; // Replace with your Vercel project ID
 
   try {
     const response = await fetch(

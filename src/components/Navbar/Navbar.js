@@ -60,7 +60,7 @@ export default function Navbar() {
                   </div>
 
                   <h1 className="text-gray-700 hover:text-blue-500 text-2xl font-bold ml-4 md:ml-0 cursor-pointer">
-                    Main section 
+                    Main 
                   </h1>
                 </div>
 

@@ -35,6 +35,8 @@ const HomePage = () => {
     <>
       <main>
         <Hero />
+
+       
         <div className="bg-red-100">
           <TraficSources
             textContent={transactionTextContent}
