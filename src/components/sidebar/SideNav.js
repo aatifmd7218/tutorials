@@ -31,7 +31,7 @@ export default function SideNav() {
               <span className="text-base font-semibold"> Add Employee</span>
             </div>
           </Link>
-        )}{" "}
+        )}
         {userRole === "admin" && (
           <Link
             prefetch={false}
@@ -108,6 +108,29 @@ export default function SideNav() {
             <div className="flex justify-start items-center space-x-2">
               {/* <i className="bi bi-linkedin text-2xl font-bold"></i> */}
               <span className="text-base font-semibold"> All Tutorial</span>
+            </div>
+          </Link>
+        )}
+        
+        {userRole === "admin" && (
+          <Link
+            href="/addcategoryadmin"
+            className=" block bg-[#8a8883]  text-white  px-4 py-2  rounded-md"
+          >
+            <div className="flex justify-start items-center space-x-2">
+              {/* <i className="bi bi-linkedin text-2xl font-bold"></i> */}
+              <span className="text-base font-semibold"> Add Category</span>
+            </div>
+          </Link>
+        )}
+        {userRole === "admin" && (
+          <Link
+            href="/allcategoryadmin"
+            className=" block bg-[#8a8883]  text-white  px-4 py-2  rounded-md"
+          >
+            <div className="flex justify-start items-center space-x-2">
+              {/* <i className="bi bi-linkedin text-2xl font-bold"></i> */}
+              <span className="text-base font-semibold"> All Categories</span>
             </div>
           </Link>
         )}

@@ -20,6 +20,9 @@ const AddBlog = () => {
   const [selectedUserName, setSelectedUserName] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [featuredPost, setFeaturedPost] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(""); 
+
 
   const { data: session, status } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
@@ -48,6 +51,25 @@ const AddBlog = () => {
     };
     fetchData();
   }, []);
+
+
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/categories");
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      const data = await response.json();
+      setCategories(data); // Make sure to use the same state for both
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+  
 
   // Determine if user is admin or employee
   useEffect(() => {
@@ -90,6 +112,10 @@ const AddBlog = () => {
     setFeaturedPost(event.target.value);
   };
 
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value); 
+  };
+
   const handleAddBlog = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
@@ -123,6 +149,7 @@ const AddBlog = () => {
         formData.append("published", published);
         formData.append("authorId", selectedUser.id);
         formData.append("featuredPost", featuredPost);
+        formData.append("category", selectedCategory);
 
         const response = await fetch("/api/addblog", {
           method: "POST",
@@ -143,6 +170,7 @@ const AddBlog = () => {
           setImageName("");
           setFeaturedPost("");
           setSelectedUserName(isAdmin ? "" : session.user.username);
+          setSelectedCategory(""); 
           window.location.href = "/allblogadmin"; // Redirect after success
         }
         setFormSubmitted(false);
@@ -275,6 +303,23 @@ const AddBlog = () => {
                     {users.map((user) => (
                       <option key={user.username} value={user.username}>
                         {user.username}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {isAdmin && (
+                  <select
+                    onChange={handleCategoryChange}
+                    value={selectedCategory || ""}
+                    className="select select-bordered w-full"
+                    required
+                  >
+                    <option disabled value="">
+                      Add category
+                    </option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
                       </option>
                     ))}
                   </select>

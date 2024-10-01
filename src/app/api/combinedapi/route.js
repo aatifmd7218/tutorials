@@ -58,7 +58,7 @@ export async function POST(req, res) {
   const contentType = req.headers.get("Content-Type");
   if (contentType.includes("application/json")) {
     body = await req.json();
-    ({ apiName } = body);
+    ({ apiName} = body);
   } else if (contentType.includes("multipart/form-data")) {
     data = await req.formData();
     apiName = data.get("apiName");
@@ -1084,6 +1084,7 @@ export async function POST(req, res) {
       );
     }
   }
+  
 
   return NextResponse.json({ error: "Invalid API name" }, { status: 400 });
 }

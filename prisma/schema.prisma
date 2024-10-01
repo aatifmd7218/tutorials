@@ -100,3 +100,8 @@ model TutorialSubtopicLive {
   delete_request String?
   createdAt      DateTime      @default(now())
 }
+
+model Category {
+  id        Int             @id @default(autoincrement())
+  name      String          @unique
+}
