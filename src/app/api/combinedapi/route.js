@@ -316,6 +316,10 @@ export async function POST(req, res) {
         );
       }
 
+      const currentDate = new Date();
+      const shouldPublishNow = publishDateObj <= currentDate
+
+
       if (blog.bloglive_id === null) {
         await prisma.bloglivet.create({
           data: {
@@ -325,7 +329,7 @@ export async function POST(req, res) {
             image: blog.image,
             publishDate: publishDateObj,
             slug: blog.slug,
-            published: "Y",
+            published: shouldPublishNow ? "Y" : "N",
             delete_request: blog.delete_request,
             author_id: blog.author_id,
             featuredpost: blog.featuredpost,
@@ -354,7 +358,7 @@ export async function POST(req, res) {
               description: blog.description,
               publishDate: publishDateObj,
               content: blog.content,
-              published: "Y",
+              published: shouldPublishNow ? "Y" : "N",
               image: blog.image,
               delete_request: blog.delete_request,
               author_id: blog.author_id,
@@ -369,7 +373,7 @@ export async function POST(req, res) {
               description: blog.description,
               publishDate: publishDateObj,
               content: blog.content,
-              published: "Y",
+              published: shouldPublishNow ? "Y" : "N",
               delete_request: blog.delete_request,
               author_id: blog.author_id,
               featuredpost: blog.featuredpost,

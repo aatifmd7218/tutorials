@@ -1,21 +1,70 @@
-import { NextRequest, NextResponse } from "next/server";
+
+import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 export const dynamic = "force-dynamic";
 
-export async function GET(req, res) {
+// GET Handler: Fetch Published Blogs
+export async function GET(req) {
   try {
     const blogs = await prisma.bloglivet.findMany({
       where: { published: "Y" },
     });
-    console.log("blogs", blogs);
+    console.log("Published Blogs:", blogs);
     return NextResponse.json({ result: blogs }, { status: 200 });
   } catch (error) {
-    console.error("Error during getting blogs data:", error);
+    console.error("Error fetching published blogs:", error);
     return NextResponse.json(
-      { error: "Failed to get blogs data" },
+      { error: "Failed to get published blogs" },
+      { status: 500 }
+    );
+  }
+}
+
+// POST Handler: Publish Scheduled Blogs
+export async function POST(req) {
+  // Security check: Verify a secret token
+  const authHeader = req.headers.get("authorization");
+  const SECRET_TOKEN = process.env.PUBLISHBLOGS_SECRET_TOKEN;
+
+  if (authHeader !== `Bearer ${SECRET_TOKEN}`) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
+  }
+
+  try {
+    const currentDate = new Date();
+
+    // Find blogs that need to be published
+    const blogsToPublish = await prisma.bloglivet.findMany({
+      where: {
+        published: "N",
+        publishDate: {
+          lte: currentDate,
+        },
+      },
+    });
+
+    for (const blog of blogsToPublish) {
+      await prisma.bloglivet.update({
+        where: { id: blog.id },
+        data: { published: "Y" },
+      });
+      console.log(`Published blog ID: ${blog.id}`);
+    }
+
+    return NextResponse.json(
+      { result: `Published ${blogsToPublish.length} blogs.` },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error during publishing scheduled blogs:", error);
+    return NextResponse.json(
+      { error: "Failed to publish blogs" },
       { status: 500 }
     );
   }
