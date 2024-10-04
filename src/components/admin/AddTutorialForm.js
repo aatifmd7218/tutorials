@@ -130,14 +130,14 @@ const AddTutorialForm = () => {
                 className="mt-3 select select-bordered w-full"
               >
                 <option disabled value="">
-                  Assign to Employee?
+                  Assign to Author?
                 </option>
                 {users.map((user) => (
                   <option key={user.username}>{user.username}</option>
                 ))}
                 {selectedUserName === "" && (
                   <option disabled style={{ display: "none" }}>
-                    Assign to Employee?
+                    Assign to Author?
                   </option>
                 )}
               </select>

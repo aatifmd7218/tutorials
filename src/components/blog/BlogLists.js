@@ -35,11 +35,15 @@ export default function BlogLists({ blogData }) {
     fetchImages();
   }, [blogData]);
 
+  
+
   return (
     <div className="space-y-10">
       {blogData &&
         blogData.map((blog) => (
+          
           <div key={blog.id} className="space-y-4 ">
+            
             {blog.image && imageData[blog.id] && (
               <div className="card-zoom bg-gray-100 w-[100%] h-[300px] sm:h-[450px] rounded-xl ">
                 <button className="absolute z-10 top-4 end-4 bg-indigo-500 hover:bg-indigo-700 text-white hover:text-gray-200 shadow-2xl hover:shadow-none font-semibold p-2 rounded-full "></button>
@@ -83,6 +87,9 @@ export default function BlogLists({ blogData }) {
                 <p className="text-center text-gray-600 text-base font-normal">
                   {blog.description.slice(0, 150)}...
                 </p>
+              )}
+              {blog.authorName && (
+                <p className="text-center text-gray-600 text-base font-normal"> By {blog.authorName}</p>
               )}
               <Link
                 prefetch={false}

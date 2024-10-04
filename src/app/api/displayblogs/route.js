@@ -23,7 +23,8 @@ export async function GET(req, res) {
         b.delete_request,
         b.author_id,
         b.bloglive_id,
-        b.featuredpost
+        b.featuredpost,
+        b."publishDate"
       FROM public."Blogt" b
     
       UNION ALL
@@ -39,14 +40,15 @@ export async function GET(req, res) {
         bl.delete_request,
         bl.author_id,
         null,
-        bl.featuredpost
+        bl.featuredpost,
+        bl."publishDate"
       FROM public."Bloglivet" bl
       LEFT JOIN public."Blogt" b ON bl.id = b.bloglive_id
       WHERE b.bloglive_id IS NULL
     ) AS combined
     ORDER BY title;
     `;
-
+  
     return NextResponse.json({ result: blogs }, { status: 200 });
   } catch (error) {
     console.error("Error during getting blogs data:", error);

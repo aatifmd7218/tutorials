@@ -14,15 +14,16 @@ datasource db {
 }
 
 model Usert {
-  id        Int             @id @default(autoincrement())
-  email     String          @unique
-  username  String          @unique
-  password  String
-  userRole  String
-  blocked   String?
-  blogs     Blogt[]         @relation("UserToBlogt")
-  blogslive Bloglivet[]     @relation("UserToBloglivet")
-  topics    TutorialTopic[] @relation("UserToTopic")
+  id          Int             @id @default(autoincrement())
+  email       String          @unique
+  username    String          @unique
+  password    String
+  userRole    String
+  authorName  String
+  blocked     String?
+  blogs       Blogt[]         @relation("UserToBlogt")
+  blogslive   Bloglivet[]     @relation("UserToBloglivet")
+  topics      TutorialTopic[] @relation("UserToTopic")
 }
 
 model Blogt {
@@ -33,6 +34,7 @@ model Blogt {
   content        String?  @db.Text
   image          String? // Assuming the image URL will be stored as a string
   published      String
+  publishDate    DateTime
   delete_request String?
   createdAt      DateTime @default(now())
   author         Usert    @relation("UserToBlogt", fields: [author_id], references: [id])
@@ -49,6 +51,7 @@ model Bloglivet {
   content        String?  @db.Text
   image          String? // Assuming the image URL will be stored as a string
   published      String
+  publishDate    DateTime
   delete_request String?
   createdAt      DateTime @default(now())
   author         Usert    @relation("UserToBloglivet", fields: [author_id], references: [id])

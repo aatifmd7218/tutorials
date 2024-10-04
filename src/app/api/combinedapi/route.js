@@ -66,13 +66,14 @@ export async function POST(req, res) {
 
   if (apiName === "addemployee") {
     try {
-      const { username, email, password } = body;
+      const { username, authorName, email, password } = body;
 
       const hashedPassword = md5(password);
 
       await prisma.usert.create({
         data: {
           username,
+          authorName,
           email,
           password: hashedPassword,
           userRole: "employee",
@@ -134,13 +135,23 @@ export async function POST(req, res) {
     }
   } else if (apiName === "updateemployee") {
     try {
-      const { selectedId, username, email, password } = body;
+      const { selectedId, authorName,  username, email, password } = body;
 
       if (username !== "") {
         await prisma.usert.update({
           where: { id: selectedId },
           data: {
             username,
+          },
+        });
+      }
+
+      
+      if (authorName !== "") {
+        await prisma.usert.update({
+          where: { id: selectedId },
+          data: {
+            authorName,
           },
         });
       }
@@ -278,9 +289,32 @@ export async function POST(req, res) {
     try {
       const { selectedId } = body;
 
-      const blog = await prisma.blogt.findUnique({
-        where: { id: selectedId },
-      });
+     
+      const blogId = parseInt(selectedId, 10);
+    if (isNaN(blogId)) {
+      return NextResponse.json(
+        { error: "Invalid blog ID" },
+        { status: 400 }
+      );
+    }
+    const blog = await prisma.blogt.findUnique({
+      where: { id: blogId }// Include author relation if needed
+    });
+
+    if (!blog) {
+      return NextResponse.json(
+        { error: "Blog not found" },
+        { status: 404 }
+      );
+    }
+
+      const publishDateObj = blog.publishDate;
+      if (!publishDateObj || isNaN(new Date(publishDateObj))) {
+        return NextResponse.json(
+          { error: "Invalid publishDate in Blogt" },
+          { status: 400 }
+        );
+      }
 
       if (blog.bloglive_id === null) {
         await prisma.bloglivet.create({
@@ -289,6 +323,7 @@ export async function POST(req, res) {
             description: blog.description,
             content: blog.content,
             image: blog.image,
+            publishDate: publishDateObj,
             slug: blog.slug,
             published: "Y",
             delete_request: blog.delete_request,
@@ -317,6 +352,7 @@ export async function POST(req, res) {
             data: {
               title: blog.title,
               description: blog.description,
+              publishDate: publishDateObj,
               content: blog.content,
               published: "Y",
               image: blog.image,
@@ -331,6 +367,7 @@ export async function POST(req, res) {
             data: {
               title: blog.title,
               description: blog.description,
+              publishDate: publishDateObj,
               content: blog.content,
               published: "Y",
               delete_request: blog.delete_request,

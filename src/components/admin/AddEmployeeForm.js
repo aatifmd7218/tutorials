@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 const AddEmployeeForm = () => {
   const [username, setUsername] = useState();
+  const [authorName, setAuthorName] = useState()
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmpassword, setConfirmPassword] = useState();
@@ -25,6 +26,7 @@ const AddEmployeeForm = () => {
           body: JSON.stringify({
             apiName: "addemployee",
             username,
+            authorName,
             email,
             password,
           }),
@@ -33,9 +35,10 @@ const AddEmployeeForm = () => {
         ({ error, result } = await response.json());
 
         if (error === undefined) {
-          setToastMessage("Employee Added Successfully");
+          setToastMessage("Author Added Successfully");
           setTimeout(async () => {
             setUsername("");
+            setAuthorName("");
             setEmail("");
             setPassword("");
             setConfirmPassword("");
@@ -44,7 +47,7 @@ const AddEmployeeForm = () => {
         }
 
         if (error !== undefined) {
-          console.log("add Employee error:", error);
+          console.log("add Author error:", error);
         }
       }
 
@@ -52,6 +55,7 @@ const AddEmployeeForm = () => {
         setToastMessage("Password and Confirm Password does not match");
         setTimeout(() => {
           setUsername("");
+          setAuthorName("")
           setEmail("");
           setPassword("");
           setConfirmPassword("");
@@ -60,7 +64,7 @@ const AddEmployeeForm = () => {
         }, 3000);
       }
     } catch (error) {
-      console.error("add Employee operation error", error);
+      console.error("add Author operation error", error);
     }
   };
 
@@ -77,7 +81,7 @@ const AddEmployeeForm = () => {
         <div className="first-letter:card w-full bg-base-100">
           <form className="card-body ">
             <h1 className="pt-4 text-center text-3xl font-semibold">
-              Add Employee
+              Add Author
             </h1>
             <div>
               <label className="form-control  w-full">
@@ -89,6 +93,18 @@ const AddEmployeeForm = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="johndoe"
+                  className="input input-bordered w-full  placeholder-gray-500"
+                />
+              </label>
+              <label className="form-control  w-full">
+                <div className="label ">
+                  <span className="label-text font-bold ">Name of Author</span>
+                </div>
+                <input
+                  type="text"
+                  value={authorName}
+                  onChange={(e) => setAuthorName(e.target.value)}
+                  placeholder="John Deo"
                   className="input input-bordered w-full  placeholder-gray-500"
                 />
               </label>

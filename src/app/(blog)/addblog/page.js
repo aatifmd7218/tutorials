@@ -4,6 +4,8 @@ import "suneditor/dist/css/suneditor.min.css";
 import dynamic from "next/dynamic";
 import SideNav from "@/components/sidebar/SideNav";
 import { useSession } from "next-auth/react";
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"; 
 
 const DynamicSunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
@@ -16,6 +18,8 @@ const AddBlog = () => {
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState("");
   const [published, setPublished] = useState("N");
+  const [publishType, setPublishType] = useState("now");
+  const [publishDate, setPublishDate] = useState(new Date());
   const [users, setUsers] = useState([]);
   const [selectedUserName, setSelectedUserName] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
@@ -71,7 +75,7 @@ const AddBlog = () => {
   }, []);
   
 
-  // Determine if user is admin or employee
+  // Determine if user is admin or author
   useEffect(() => {
     if (status === "loading") return;
 
@@ -116,6 +120,10 @@ const AddBlog = () => {
     setSelectedCategory(event.target.value); 
   };
 
+  const handlePublishTypeChange = (e) => {
+    setPublishType(e.target.value);
+  };
+
   const handleAddBlog = async (e) => {
     e.preventDefault();
     setFormSubmitted(true);
@@ -124,7 +132,7 @@ const AddBlog = () => {
       
       setTimeout(async () => {
         // If admin, find the selected user
-        // If employee, assign to self
+        // If author, assign to self
         const selectedUser = isAdmin
           ? users.find((user) => user.username === selectedUserName)
           : session.user; // Assign to self
@@ -137,7 +145,12 @@ const AddBlog = () => {
           }
 
 
-        setPublished("N"); // Or set to "Y" based on your requirement
+          const publishDateValue = publishType === "now" ? new Date() : publishDate;
+          if (!(publishDateValue instanceof Date) || isNaN(publishDateValue)) {
+            console.error("Invalid publish date");
+            setFormSubmitted(false);
+            return;
+          }
 
         const formData = new FormData();
         formData.append("title", title);
@@ -147,6 +160,7 @@ const AddBlog = () => {
           formData.append("image", image);
         }
         formData.append("published", published);
+        formData.append("publishDate", publishDateValue.toISOString());
         formData.append("authorId", selectedUser.id);
         formData.append("featuredPost", featuredPost);
         formData.append("category", selectedCategory);
@@ -186,7 +200,7 @@ const AddBlog = () => {
       {formSubmitted && (
         <div className="toast toast-top toast-end z-50">
           <div className="alert alert-info">
-            <span>Blog Assigned to employee</span>
+            <span>Blog Assigned to author</span>
           </div>
         </div>
       )}
@@ -298,7 +312,7 @@ const AddBlog = () => {
                     required
                   >
                     <option disabled value="">
-                      Assign to Employee?
+                      Assign to author?
                     </option>
                     {users.map((user) => (
                       <option key={user.username} value={user.username}>
@@ -307,7 +321,7 @@ const AddBlog = () => {
                     ))}
                   </select>
                 )}
-                {isAdmin && (
+                
                   <select
                     onChange={handleCategoryChange}
                     value={selectedCategory || ""}
@@ -323,7 +337,27 @@ const AddBlog = () => {
                       </option>
                     ))}
                   </select>
-                )}
+
+                
+                  
+                  <select
+                    value={publishType}
+                    onChange={handlePublishTypeChange}
+                    className="mt-2 select select-bordered w-full "
+                  >
+                    <option value="now">Publish Now</option>
+                    <option value="date">Select Date</option>
+                  </select>
+
+                  {publishType === "date" && (
+                    <DatePicker
+                      selected={publishDate}
+                      onChange={(date) => setPublishDate(date)}
+                      className="mt-4 input input-bordered w-full max-w-xs"
+                    />
+                  )}
+              
+               
                 <div className="flex justify-end">
                   <button
                     type="submit"

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars2Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
-import { navigationItems } from "./navigationItems";
+import { navigationItems, categories } from "./navigationItems";
 import MobileNavbar from "./MobileNavbar";
 import Link from "next/link";
 import React from "react";
@@ -93,6 +93,15 @@ export default function Navbar() {
                             </Link>
                           </li>
                         ))}
+                        <div className="dropdown">
+                          <ul>
+                            {categories.map(() => {
+                              <li>
+
+                              </li>
+                            })}
+                          </ul>
+                        </div>
                       </ul>
                     </div>
                   </div>

@@ -13,6 +13,7 @@ export async function POST(req) {
     const desc = data.get("desc");
     const content = data.get("content");
     let published = data.get("published");
+    const publishDate = data.get("publishDate"); // Get publishDate from FormData
     const authorId = data.get("authorId");
     const featuredPost = data.get("featuredPost");
     let newBlog;
@@ -27,11 +28,21 @@ export async function POST(req) {
       .replace(/\s+/g, "-") // Replace spaces with dashes
       .replace(/-+/g, "-");
 
+
+      const publishDateObj = new Date(publishDate);
+    if (isNaN(publishDateObj)) {
+      return NextResponse.json(
+        { error: "Invalid publishDate" },
+        { status: 400 }
+      );
+    }
+
     newBlog = await prisma.blogt.create({
       data: {
         title,
         slug,
         description: desc,
+        publishDate: publishDateObj,
         content,
         published,
         author_id: parseInt(authorId),

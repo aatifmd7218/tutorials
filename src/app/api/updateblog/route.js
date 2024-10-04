@@ -14,6 +14,7 @@ export async function PUT(req) {
     const image = data.get("image");
     const title = data.get("title");
     const description = data.get("description");
+    const authorName = data.get("authorName");
     const content = data.get("content");
     const published = data.get("published");
     const author_id = data.get("author_id");

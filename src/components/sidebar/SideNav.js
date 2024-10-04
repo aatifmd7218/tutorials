@@ -28,7 +28,7 @@ export default function SideNav() {
           >
             <div className="flex justify-start items-center space-x-2">
               {/* <i className="bi bi-facebook text-2xl font-bold"></i> */}
-              <span className="text-base font-semibold"> Add Employee</span>
+              <span className="text-base font-semibold"> Add Author</span>
             </div>
           </Link>
         )}
@@ -40,7 +40,7 @@ export default function SideNav() {
           >
             <div className="flex justify-start items-center space-x-2">
               {/* <i className="bi bi-linkedin text-2xl font-bold"></i> */}
-              <span className="text-base font-semibold"> All Employee</span>
+              <span className="text-base font-semibold"> All Authors</span>
             </div>
           </Link>
         )}
