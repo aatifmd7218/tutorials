@@ -10,6 +10,7 @@ import Navbar from "../Navbar/Navbar";
 
 const BlogPage = () => {
   const [blogData, setBlogData] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -52,11 +53,11 @@ const BlogPage = () => {
   return (
     <>
       <main>
-        <Navbar />
+        <Navbar setSelectedCategory={setSelectedCategory} />
         <div className="mx-auto max-w-2xl px-6 py-10 sm:px-8 sm:py-16 lg:max-w-7xl ">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-10 sm:gap-x-10">
             <div className="col-span-8">
-              <BlogLists blogData={displayedData} />
+              <BlogLists blogData={displayedData} selectedCategory={selectedCategory} />
               <Pagination
                 handlePageChange={handlePageChange}
                 currentPage={currentPage}

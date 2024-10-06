@@ -8,9 +8,13 @@ import MobileNavbar from "./MobileNavbar";
 import Link from "next/link";
 import React from "react";
 
-export default function Navbar() {
+
+export default function Navbar({ setSelectedCategory }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
+  const [activeCategories, setActiveCategories] = useState([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 
   useEffect(() => {
     const currentItem = navigationItems.find((item) => item.href === pathname);
@@ -20,8 +24,34 @@ export default function Navbar() {
     }
   }, [pathname]);
 
+  useEffect(() => {
+    // Fetch all categories and filter active ones
+    const fetchActiveCategories = async () => {
+      try {
+        const response = await fetch("/api/categories");
+        if (!response.ok) {
+          throw new Error("Failed to fetch categories");
+        }
+        const data = await response.json();
+        const activeCats = data.filter((cat) => cat.isActive);
+        setActiveCategories(activeCats);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+
+    fetchActiveCategories();
+  }, []);
+
   const toggleMenu = () => {
     setOpen(!open);
+  };
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+  const handleCategorySelect = (category) => {
+    setSelectedCategory(category); 
+    setIsDropdownOpen(false); 
   };
 
   const handleSignOut = () => {
@@ -60,7 +90,7 @@ export default function Navbar() {
                   </div>
 
                   <h1 className="text-gray-700 hover:text-blue-500 text-2xl font-bold ml-4 md:ml-0 cursor-pointer">
-                    Main 
+                    Main
                   </h1>
                 </div>
 
@@ -93,15 +123,51 @@ export default function Navbar() {
                             </Link>
                           </li>
                         ))}
-                        <div className="dropdown">
-                          <ul>
-                            {categories.map(() => {
-                              <li>
-
-                              </li>
-                            })}
-                          </ul>
-                        </div>
+                        <li className="relative group">
+                          <button
+                            onClick={toggleDropdown}
+                            className="text-whit focus:outline-none rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center font-bold"
+                            type="button"
+                          >
+                            Categories
+                            <svg
+                              className="w-2.5 h-2.5 ms-3"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 10 6"
+                            >
+                              <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="m1 1 4 4 4-4"
+                              />
+                            </svg>
+                          </button>
+                          {/* Dropdown Menu */}
+                          <div
+                            className={`z-10 ${
+                              isDropdownOpen ? "block" : "hidden"
+                            } absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700`}
+                          >
+                            <ul className="py-1 text-sm text-gray-700 dark:text-gray-200 list-none">
+                              {activeCategories.map((category) => (
+                                <li key={category.id}>
+                                  <button
+                                    onClick={() =>
+                                      handleCategorySelect(category.slug)
+                                    } // Update selected category on click
+                                    className="block py-2 hover:bg-gray-100"
+                                  >
+                                    {category.name}
+                                  </button>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </li>
                       </ul>
                     </div>
                   </div>

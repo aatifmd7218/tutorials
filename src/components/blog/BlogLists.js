@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-export default function BlogLists({ blogData }) {
+export default function BlogLists({ blogData, selectedCategory  }) {
   const [imageData, setImageData] = useState({});
 
   useEffect(() => {
@@ -39,19 +39,20 @@ export default function BlogLists({ blogData }) {
     console.log("Received blog data:", blogData);
   }, [blogData]);
   
+  const filteredBlogs = selectedCategory
+  ? blogData.filter(blog => blog.category === selectedCategory)
+  : blogData;
 
   return (
     <div className="space-y-10">
-      {blogData &&
-        blogData.map((blog) => (
-          <div key={blog.id} className="space-y-4 ">
+      {filteredBlogs &&
+        filteredBlogs.map((blog) => (
+          <div key={blog.id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             {blog.image && imageData[blog.id] && (
               <div className="card-zoom bg-gray-100 w-[100%] h-[300px] sm:h-[450px] rounded-xl ">
-                <button className="absolute z-10 top-4 end-4 bg-indigo-500 hover:bg-indigo-700 text-white hover:text-gray-200 shadow-2xl hover:shadow-none font-semibold p-2 rounded-full "></button>
                 <div className="card-zoom-image">
                   <Link prefetch={false} href={`blog/${blog.slug}`}>
                     <Image
-                      // src={`${blog.image}?t=${new Date().getTime()}`}
                       src={imageData[blog.id]}
                       alt="img"
                       fill
@@ -59,51 +60,36 @@ export default function BlogLists({ blogData }) {
                     />
                   </Link>
                 </div>
+                <button className="absolute z-10 top-4 end-4 bg-indigo-500 hover:bg-indigo-700 text-white hover:text-gray-200 shadow-2xl hover:shadow-none font-semibold p-2 rounded-full "></button>
               </div>
             )}
-            <div className="flex flex-col justify-center items-center space-y-6 pb-6">
+            <div className=" p-6">
               <Link prefetch={false} href={`blog/${blog.slug}`}>
-                <h1 className="text-gray-800 hover:text-red-600 hover:underline text-2xl font-bold">
+                <h1 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
                   {blog.title}
                 </h1>
               </Link>
 
-              {/* <div className="flex items-center text-gray-500 text-sm">
-                <Image
-                  src={blog.author.image}
-                  alt={blog.author.imageAlt}
-                  width={40}
-                  height={40}
-                  className="rounded-full m-2 shadow-xl"
-                />
-                <div>
-                  By{" "}
-                  <Link prefetch={false} href={blog.author.authorLink}>
-                    {blog.author.firstName}
-                  </Link>{" "}
-                  <span className="px-1 ">&#x2022;</span> {blog.author.postDate}{" "}
-                </div>
-              </div> */}
               {blog.description && (
-                <p className="text-center text-gray-600 text-base font-normal">
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                   {blog.description.slice(0, 150)}...
                 </p>
               )}
               {blog.authorName && (
-                <p className="text-center text-gray-600 text-base font-normal">
-                  {" "}
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              
                   By {blog.authorName}
                 </p>
               )}
               {blog.publishDate && (
-                <p className="text-center text-gray-500 text-sm">
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
                   Published on {new Date(blog.publishDate).toLocaleDateString()}
                 </p>
               )}
               <Link
                 prefetch={false}
                 href={`blog/${blog.slug}`}
-                className="bg-indigo-500 hover:bg-gray-800 text-white hover:text-gray-200 shadow-2xl hover:shadow-none font-semibold px-6 py-2 rounded-full "
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 "
               >
                 Read More
               </Link>

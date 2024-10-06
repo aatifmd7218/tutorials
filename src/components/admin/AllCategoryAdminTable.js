@@ -16,6 +16,18 @@ const AllCategoryAdminTable = () => {
   const columns = useMemo(
     () => [
       {
+        accessorKey: "isActive",
+        header: "Active",
+        size: 100,
+        Cell: ({ row }) => (
+          <input
+            type="checkbox"
+            checked={row.original.isActive}
+            onChange={() => handleToggleActive(row.original.id, row.original.isActive)}
+          />
+        ),
+      },
+      {
         accessorKey: "name",
         header: "Category Name",
         size: 200,
@@ -89,6 +101,28 @@ const AllCategoryAdminTable = () => {
   const handleDelete = (row) => {
     setSelectedId(row.original.id);
     document.getElementById("delete_modal").showModal();
+  };
+
+  // Handle Toggle Active Status
+  const handleToggleActive = async (id, currentStatus) => {
+    try {
+      const response = await fetch(`/api/categories/${id}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ isActive: !currentStatus }), // Toggle active status
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update category status");
+      }
+
+      // Refresh categories
+      await fetchCategories();
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   // Update Category

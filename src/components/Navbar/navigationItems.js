@@ -29,15 +29,5 @@ export const navigationItems = [
     href: "/contact",
     current: false,
   },
-  {
-    label: "categories",
-    href: "/categories",
-    current: false,
-  },
-];
 
-export const categories = [
-  {
-    
-  }
-]
+];

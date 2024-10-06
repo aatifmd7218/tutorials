@@ -8,9 +8,15 @@ export const dynamic = "force-dynamic";
 
 // GET Handler: Fetch Published Blogs
 export async function GET(req) {
+  const url = new URL(req.url);
+  const category = url.searchParams.get("category"); 
+
   try {
     const blogs = await prisma.bloglivet.findMany({
-      where: { published: "Y" },
+      where: {
+        published: "Y",
+        ...(category && { category: { slug: category } })
+      },
       include: {
         author: {
           select: {
@@ -22,9 +28,9 @@ export async function GET(req) {
 
     const processedBlogs = blogs.map(blog => ({
       ...blog,
-      authorName: blog.author?.authorName || "Unknown", // Default to "Unknown" if no author
+      authorName: blog.author?.authorName || "Unknown", 
     }));
-    // console.log("Published Blogs:", blogs);
+
     return NextResponse.json({ result: processedBlogs }, { status: 200 });
   } catch (error) {
     console.error("Error fetching published blogs:", error);
@@ -35,9 +41,10 @@ export async function GET(req) {
   }
 }
 
+
 // POST Handler: Publish Scheduled Blogs
 export async function POST(req) {
-  // Security check: Verify a secret token
+ 
   const authHeader = req.headers.get("authorization");
   const SECRET_TOKEN = process.env.PUBLISHBLOGS_SECRET_TOKEN;
 
@@ -51,7 +58,7 @@ export async function POST(req) {
   try {
     const currentDate = new Date();
 
-    // Find blogs that need to be published
+   
     const blogsToPublish = await prisma.bloglivet.findMany({
       where: {
         published: "N",

@@ -1,35 +1,65 @@
-
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-// Handling GET and POST requests
+// GET Handler: Fetch All Categories
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany();
-    return NextResponse.json(categories);
+    const categories = await prisma.category.findMany({
+      orderBy: { name: "asc" },
+    });
+    return NextResponse.json(categories, { status: 200 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch categories' }, { status: 500 });
+    console.error("Error fetching categories:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch categories" },
+      { status: 500 }
+    );
   }
 }
 
+
+// POST Handler: Add New Category
 export async function POST(request) {
-  const { categoryName } = await request.json();
-
-  // Validate input
-  if (!categoryName) {
-    return NextResponse.json({ error: 'Category name is required' }, { status: 400 });
-  }
-
   try {
-    const category = await prisma.category.create({
+    const { name, slug, isActive } = await request.json();
+
+    if (!name || !slug) {
+      return NextResponse.json(
+        { error: "Name and slug are required" },
+        { status: 400 }
+      );
+    }
+
+ 
+    const existingCategory = await prisma.category.findUnique({
+      where: { slug },
+    });
+
+    if (existingCategory) {
+      return NextResponse.json(
+        { error: "Category with this slug already exists" },
+        { status: 400 }
+      );
+    }
+
+    // Create new category
+    const newCategory = await prisma.category.create({
       data: {
-        name: categoryName,
+        name,
+        slug,
+        isActive,
       },
     });
-    return NextResponse.json(category, { status: 201 });
+
+    return NextResponse.json(newCategory, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to add category' }, { status: 500 });
+    console.error("Error adding category:", error);
+    return NextResponse.json(
+      { error: "Failed to add category" },
+      { status: 500 }
+    );
   }
 }
+
