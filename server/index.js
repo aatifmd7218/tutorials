@@ -2,6 +2,7 @@ const express = require("express");
 const { Pool } = require("pg");
 const bodyParser = require("body-parser"); // Import body-parser
 const cors = require("cors"); // Import cors
+const cron = require("node-cron"); 
 
 const app = express();
 const port = 9000;
@@ -34,6 +35,9 @@ app.use("/api/signup", signupRouter);
 const loginRouter = require("./routes/login1");
 app.use("/api/login1", loginRouter);
 
+cron.schedule('* * * * *', () => {
+  console.log('Cron job running every minute');
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

@@ -320,6 +320,15 @@ export async function POST(req, res) {
       const shouldPublishNow = publishDateObj <= currentDate
 
 
+
+      if (!shouldPublishNow) {
+        await prisma.blogt.update({
+          where: { id: blog.id },
+          data: { published: "N" }
+        });
+        return NextResponse.json({ result: "Blog is scheduled for future publishing" }, { status: 200 });
+      }
+  
       if (blog.bloglive_id === null) {
         await prisma.bloglivet.create({
           data: {
@@ -329,7 +338,7 @@ export async function POST(req, res) {
             image: blog.image,
             publishDate: publishDateObj,
             slug: blog.slug,
-            published: shouldPublishNow ? "Y" : "N",
+            published: "Y",
             delete_request: blog.delete_request,
             author_id: blog.author_id,
             featuredpost: blog.featuredpost,
@@ -358,7 +367,7 @@ export async function POST(req, res) {
               description: blog.description,
               publishDate: publishDateObj,
               content: blog.content,
-              published: shouldPublishNow ? "Y" : "N",
+              published: "Y",
               image: blog.image,
               delete_request: blog.delete_request,
               author_id: blog.author_id,
@@ -373,7 +382,7 @@ export async function POST(req, res) {
               description: blog.description,
               publishDate: publishDateObj,
               content: blog.content,
-              published: shouldPublishNow ? "Y" : "N",
+              published: "Y",
               delete_request: blog.delete_request,
               author_id: blog.author_id,
               featuredpost: blog.featuredpost,

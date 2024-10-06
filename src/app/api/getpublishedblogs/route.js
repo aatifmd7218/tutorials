@@ -11,9 +11,21 @@ export async function GET(req) {
   try {
     const blogs = await prisma.bloglivet.findMany({
       where: { published: "Y" },
+      include: {
+        author: {
+          select: {
+            authorName: true,
+          },
+        },
+      },
     });
-    console.log("Published Blogs:", blogs);
-    return NextResponse.json({ result: blogs }, { status: 200 });
+
+    const processedBlogs = blogs.map(blog => ({
+      ...blog,
+      authorName: blog.author?.authorName || "Unknown", // Default to "Unknown" if no author
+    }));
+    // console.log("Published Blogs:", blogs);
+    return NextResponse.json({ result: processedBlogs }, { status: 200 });
   } catch (error) {
     console.error("Error fetching published blogs:", error);
     return NextResponse.json(
@@ -54,7 +66,7 @@ export async function POST(req) {
         where: { id: blog.id },
         data: { published: "Y" },
       });
-      console.log(`Published blog ID: ${blog.id}`);
+      // console.log(`Published blog ID: ${blog.id}`);
     }
 
     return NextResponse.json(

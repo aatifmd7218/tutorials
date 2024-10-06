@@ -146,6 +146,7 @@ const AllBlogAdminTable = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.PUBLISHBLOGS_SECRET_TOKEN }`, 
         },
         body: JSON.stringify({
           apiName: "approveblog",
@@ -155,10 +156,20 @@ const AllBlogAdminTable = () => {
 
       const { error, result } = await response.json();
 
-      if (error !== undefined) {
-        console.log("approve Blog error:", error);
+      
+    if (response.ok) {
+      // Show success message based on result
+      if (result.includes("published")) {
+        alert("Blog published successfully.");
+      } else if (result.includes("scheduled")) {
+        alert("Blog has been scheduled for publishing.");
       }
       handleGetBlogs();
+    } else {
+      // Handle errors
+      console.log("Approve Blog error:", error);
+      alert(`Error: ${error}`);
+    }
     } catch (error) {
       console.error("approve blog operation error", error);
     }
@@ -178,7 +189,7 @@ const AllBlogAdminTable = () => {
       });
 
       const { error, result } = await response.json();
-
+      console.log("API Response:", result);
       if (error !== undefined) {
         console.log("Unapprove Blog error:", error);
       }
@@ -226,7 +237,7 @@ const AllBlogAdminTable = () => {
       });
 
       const { error, result } = await response.json();
-
+      console.log("Fetched Blogs Data:", result);
       if (error !== undefined) {
         console.log("Blogs Get error:", error);
       }
@@ -308,6 +319,7 @@ const AllBlogAdminTable = () => {
 
   return (
     <>
+    
       <div>
         <CommonTable columns={columns} data={blogsData} minRows={10} />
       </div>

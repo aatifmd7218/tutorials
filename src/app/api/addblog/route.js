@@ -48,6 +48,13 @@ export async function POST(req) {
         author_id: parseInt(authorId),
         featuredpost: featuredPost,
       },
+      include: { // Author ka data include karo
+        author: {
+          select: {
+            authorName: true,
+          },
+        },
+      },
     });
 
     if (image !== "") {
@@ -58,15 +65,36 @@ export async function POST(req) {
         access: "public",
       });
 
-      await prisma.blogt.update({
+      newBlog = await prisma.blogt.update({
         where: { id: newBlog.id },
         data: {
           image: blob.url,
         },
+        include: { // Author ko phir se include karo
+          author: {
+            select: {
+              authorName: true,
+            },
+          },
+        },
       });
     }
 
-    return NextResponse.json({ result: "success" }, { status: 200 });
+    const responseData = {
+      id: newBlog.id,
+      title: newBlog.title,
+      slug: newBlog.slug,
+      description: newBlog.description,
+      publishDate: newBlog.publishDate,
+      content: newBlog.content,
+      published: newBlog.published,
+      author_id: newBlog.author_id,
+      featuredpost: newBlog.featuredpost,
+      image: newBlog.image,
+      authorName: newBlog.author.authorName, // AuthorName add karo
+    };
+
+    return NextResponse.json({ result: responseData }, { status: 200 });
 
     // Respond with success message
   } catch (error) {

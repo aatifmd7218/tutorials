@@ -351,9 +351,16 @@ const AddBlog = () => {
 
                   {publishType === "date" && (
                     <DatePicker
-                      selected={publishDate}
-                      onChange={(date) => setPublishDate(date)}
-                      className="mt-4 input input-bordered w-full max-w-xs"
+                    selected={publishDate}
+                    onChange={(date) => setPublishDate(date)}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={5}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    timeCaption="Time"
+                    className="mt-4 input input-bordered w-full max-w-xs"
+                    minDate={new Date()}
+
                     />
                   )}
               
