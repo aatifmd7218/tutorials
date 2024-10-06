@@ -68,7 +68,6 @@ export async function GET(req) {
     const blogData = blogs.map(blog => ({
       ...blog,
       status: blog.bloglive_id ? "published" : "pending",
-      authorName: blog.authorName || "unknown",
     }));
     // console.log("Processed Blog Data:", blogData); 
 
