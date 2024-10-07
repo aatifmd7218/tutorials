@@ -76,6 +76,17 @@ export default function Blog({ blog }) {
                 <span className="px-1 ">&#x2022;</span> {blog.author.postDate}{" "}
               </div>
             </div> */}
+            {blog.authorName && (
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+              
+                  By {blog.authorName}
+                </p>
+              )}
+              {blog.publishDate && (
+                <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+                  Published on {new Date(blog.publishDate).toLocaleDateString()}
+                </p>
+              )}
             {blog.content && (
               <div className="w-full">
                 <div

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Disclosure } from "@headlessui/react";
 import { Bars2Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
-import { navigationItems, categories } from "./navigationItems";
+import { staticNavigationItems, categories } from "./navigationItems";
 import MobileNavbar from "./MobileNavbar";
 import Link from "next/link";
 import React from "react";
@@ -15,14 +15,18 @@ export default function Navbar({ setSelectedCategory }) {
   const [activeCategories, setActiveCategories] = useState([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
-
   useEffect(() => {
-    const currentItem = navigationItems.find((item) => item.href === pathname);
+    const currentItem = [...staticNavigationItems, ...activeCategories].find(
+      (item) => item.href === pathname
+    );
     if (currentItem) {
-      navigationItems.forEach((item) => (item.current = false));
+      // Reset current status
+      [...staticNavigationItems, ...activeCategories].forEach(
+        (item) => (item.current = false)
+      );
       currentItem.current = true;
     }
-  }, [pathname]);
+  }, [pathname, activeCategories]);
 
   useEffect(() => {
     // Fetch all categories and filter active ones
@@ -33,7 +37,12 @@ export default function Navbar({ setSelectedCategory }) {
           throw new Error("Failed to fetch categories");
         }
         const data = await response.json();
-        const activeCats = data.filter((cat) => cat.isActive);
+        const activeCats = data.filter((cat) => cat.isActive)
+        .map((cat) => ({
+          label: cat.name,
+          href: `/${cat.slug}`, // Adjust the href as needed
+          current: false,
+        }));
         setActiveCategories(activeCats);
       } catch (error) {
         console.error(error.message);
@@ -53,6 +62,8 @@ export default function Navbar({ setSelectedCategory }) {
     setSelectedCategory(category); 
     setIsDropdownOpen(false); 
   };
+
+  const combinedNavigationItems = [...staticNavigationItems, ...activeCategories];
 
   const handleSignOut = () => {
     localStorage.removeItem("session");
@@ -96,7 +107,6 @@ export default function Navbar({ setSelectedCategory }) {
 
                 <div className="flex items-center space-x-8">
                   <div className="hidden md:flex items-center">
-                    {" "}
                     {/* Ensure this flex container aligns items in the center */}
                     <div className="ml-10 mt-5 flex items-center space-x-4">
                       <ul
@@ -108,7 +118,7 @@ export default function Navbar({ setSelectedCategory }) {
                           alignItems: "center",
                         }}
                       >
-                        {navigationItems.map((item, index) => (
+                        {combinedNavigationItems.map((item, index) => (
                           <li
                             key={index}
                             style={{
@@ -117,57 +127,23 @@ export default function Navbar({ setSelectedCategory }) {
                               verticalAlign: "middle",
                               alignItems: "center", // Ensure alignment is centered
                             }}
+                            className={item.current ? "text-blue-500" : ""}
                           >
                             <Link href={item.href}>
                               <b>{item.label}</b>
                             </Link>
                           </li>
                         ))}
-                        <li className="relative group">
+
+                        {/* Optional: Add Sign Out button if needed */}
+                        {/* <li>
                           <button
-                            onClick={toggleDropdown}
-                            className="text-whit focus:outline-none rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center font-bold"
-                            type="button"
+                            onClick={handleSignOut}
+                            className="text-red-500 font-bold"
                           >
-                            Categories
-                            <svg
-                              className="w-2.5 h-2.5 ms-3"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 10 6"
-                            >
-                              <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="m1 1 4 4 4-4"
-                              />
-                            </svg>
+                            Sign Out
                           </button>
-                          {/* Dropdown Menu */}
-                          <div
-                            className={`z-10 ${
-                              isDropdownOpen ? "block" : "hidden"
-                            } absolute bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700`}
-                          >
-                            <ul className="py-1 text-sm text-gray-700 dark:text-gray-200 list-none">
-                              {activeCategories.map((category) => (
-                                <li key={category.id}>
-                                  <button
-                                    onClick={() =>
-                                      handleCategorySelect(category.slug)
-                                    } // Update selected category on click
-                                    className="block py-2 hover:bg-gray-100"
-                                  >
-                                    {category.name}
-                                  </button>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </li>
+                        </li> */}
                       </ul>
                     </div>
                   </div>
@@ -176,7 +152,7 @@ export default function Navbar({ setSelectedCategory }) {
 
               {/* Mobile Navbar */}
               <MobileNavbar
-                navigationItems={navigationItems}
+                navigationItems={combinedNavigationItems}
                 open={open}
                 toggleMenu={toggleMenu}
               />

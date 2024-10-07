@@ -6,9 +6,7 @@ const prisma = new PrismaClient();
 // GET Handler: Fetch All Categories
 export async function GET() {
   try {
-    const categories = await prisma.category.findMany({
-      orderBy: { name: "asc" },
-    });
+    const categories = await prisma.category.findMany();
     return NextResponse.json(categories, { status: 200 });
   } catch (error) {
     console.error("Error fetching categories:", error);

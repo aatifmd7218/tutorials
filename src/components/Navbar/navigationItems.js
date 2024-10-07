@@ -1,4 +1,4 @@
-export const navigationItems = [
+export const staticNavigationItems = [
   {
     label: "Home",
     href: "/",
@@ -14,20 +14,21 @@ export const navigationItems = [
   //   href: "/services",
   //   current: false,
   // },
-  {
-    label: "Blog",
-    href: "/blog",
-    current: false,
-  },
-  {
-    label: "Tutorial",
-    href: "/tutorial",
-    current: false,
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-    current: false,
-  },
-
+  // {
+  //   label: "Blog",
+  //   href: "/blog",
+  //   current: false,
+  // },
+  // {
+  //   label: "Tutorial",
+  //   href: "/tutorial",
+  //   current: false,
+  // },
+  // {
+  //   label: "Contact",
+  //   href: "/contact",
+  //   current: false,
+  // },
 ];
+
+
