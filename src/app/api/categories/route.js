@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+import { NextResponse } from "next/server";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -19,7 +19,6 @@ export async function GET() {
   }
 }
 
-
 // POST Handler: Add New Category
 export async function POST(request) {
   try {
@@ -32,7 +31,6 @@ export async function POST(request) {
       );
     }
 
- 
     const existingCategory = await prisma.category.findUnique({
       where: { slug },
     });
@@ -62,4 +60,3 @@ export async function POST(request) {
     );
   }
 }
-

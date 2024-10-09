@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import fs, { writeFile } from "fs";
 import { PrismaClient } from "@prisma/client";
 import { put } from "@vercel/blob";
 
@@ -12,8 +11,8 @@ export async function POST(req) {
     const title = data.get("title");
     const desc = data.get("desc");
     const content = data.get("content");
-    let published = data.get("published");
-    const publishDate = data.get("publishDate"); // Get publishDate from FormData
+    let published = data.get("published"); // Published status from the form
+    const publishDate = data.get("publishDate");
     const authorId = data.get("authorId");
     const featuredPost = data.get("featuredPost");
     let newBlog;
@@ -21,22 +20,36 @@ export async function POST(req) {
 
     const prisma = new PrismaClient();
 
-    slug = title
-      .toLowerCase() // Convert the title to lowercase
-      .replace(/[^\w\s-]/g, "") // Remove non-word characters (excluding spaces and dashes)
-      .trim() // Trim leading and trailing spaces
-      .replace(/\s+/g, "-") // Replace spaces with dashes
-      .replace(/-+/g, "-");
+    // Generate slug from title
+    if (title) {
+      slug = title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, "")
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/-+/g, "-");
+    } else {
+      return NextResponse.json(
+        { error: "Title is required to generate slug" },
+        { status: 400 }
+      );
+    }
 
-
-      const publishDateObj = new Date(publishDate);
-    if (isNaN(publishDateObj)) {
+    // Validate and parse publishDate
+    const publishDateObj = new Date(publishDate);
+    if (isNaN(publishDateObj.getTime())) {
       return NextResponse.json(
         { error: "Invalid publishDate" },
         { status: 400 }
       );
     }
 
+    // Set the initial status if not provided
+    if (!published) {
+      published = "pending"; // Default status for new blogs
+    }
+
+    // Create the blog entry in the database
     newBlog = await prisma.blogt.create({
       data: {
         title,
@@ -48,7 +61,7 @@ export async function POST(req) {
         author_id: parseInt(authorId),
         featuredpost: featuredPost,
       },
-      include: { // Author ka data include karo
+      include: {
         author: {
           select: {
             authorName: true,
@@ -57,20 +70,23 @@ export async function POST(req) {
       },
     });
 
-    if (image !== "") {
+    // Handle image upload if image exists
+    if (image && image.name) {
       const filenameParts = image.name.split(".");
       const fileExtension = filenameParts[filenameParts.length - 1];
 
+      // Upload image to Vercel Blob storage
       const blob = await put(`${slug}.${fileExtension}`, image, {
         access: "public",
       });
 
+      // Update the blog entry with the image URL
       newBlog = await prisma.blogt.update({
         where: { id: newBlog.id },
         data: {
           image: blob.url,
         },
-        include: { // Author ko phir se include karo
+        include: {
           author: {
             select: {
               authorName: true,
@@ -91,12 +107,10 @@ export async function POST(req) {
       author_id: newBlog.author_id,
       featuredpost: newBlog.featuredpost,
       image: newBlog.image,
-      authorName: newBlog.author.authorName, // AuthorName add karo
+      authorName: newBlog.author?.authorName,
     };
 
     return NextResponse.json({ result: responseData }, { status: 200 });
-
-    // Respond with success message
   } catch (error) {
     console.error("Error during blog addition:", error);
     return NextResponse.json(

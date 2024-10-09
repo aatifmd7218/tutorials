@@ -60,13 +60,14 @@ const AllBlogAdminTable = () => {
         Cell: ({ row }) =>
           row.original.published === "N" && row.original.description !== "" ? (
             <button
-              onClick={() => handleBlogApproval(row)}
+              onClick={() => handleBlogApproval(row, row.original.publishDate)} // Pass scheduledAt here
               className="btn bg-[#dc2626] text-white hover:bg-[#dc2626]"
             >
               Approve
             </button>
           ) : null,
       },
+
       {
         accessorKey: "unapprove",
         header: "UNAPPROVAL",
@@ -140,38 +141,41 @@ const AllBlogAdminTable = () => {
     []
   );
 
-  const handleBlogApproval = async (row) => {
+  const handleBlogApproval = async (row, scheduledAt) => {
     try {
-      const response = await fetch("/api/combinedapi", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.PUBLISHBLOGS_SECRET_TOKEN }`, 
-        },
-        body: JSON.stringify({
-          apiName: "approveblog",
-          selectedId: row.original.id,
-        }),
-      });
+      const currentDate = new Date(); // Get the current date and time
+      console.log(row);
+      // Compare the scheduled time with the current time
+      if (new Date(scheduledAt) > currentDate) {
+        // Notify that it will be published at the scheduled time
+        alert(`Blog will be published on scheduled time: ${scheduledAt}`);
+      } else {
+        // Publish the blog immediately
+        const response = await fetch("/api/combinedapi", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.PUBLISHBLOGS_SECRET_TOKEN}`,
+          },
+          body: JSON.stringify({
+            apiName: "approveblog",
+            selectedId: row.original.id,
+            scheduledAt: null, // No need to send scheduled time if it's now
+          }),
+        });
 
-      const { error, result } = await response.json();
+        const { error, result } = await response.json();
 
-      
-    if (response.ok) {
-      // Show success message based on result
-      if (result.includes("published")) {
-        alert("Blog published successfully.");
-      } else if (result.includes("scheduled")) {
-        alert("Blog has been scheduled for publishing.");
+        if (response.ok) {
+          alert("Blog published successfully.");
+          handleGetBlogs(); // Refresh the blog list
+        } else {
+          console.log("Approve Blog error:", error);
+          alert(`Error: ${error}`);
+        }
       }
-      handleGetBlogs();
-    } else {
-      // Handle errors
-      console.log("Approve Blog error:", error);
-      alert(`Error: ${error}`);
-    }
     } catch (error) {
-      console.error("approve blog operation error", error);
+      console.error("Approve blog operation error", error);
     }
   };
 
@@ -237,7 +241,7 @@ const AllBlogAdminTable = () => {
       });
 
       const { error, result } = await response.json();
-      console.log("Fetched Blogs Data:", result);
+      // console.log("Fetched Blogs Data:", result);
       if (error !== undefined) {
         console.log("Blogs Get error:", error);
       }
@@ -319,7 +323,6 @@ const AllBlogAdminTable = () => {
 
   return (
     <>
-    
       <div>
         <CommonTable columns={columns} data={blogsData} minRows={10} />
       </div>

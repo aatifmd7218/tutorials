@@ -30,7 +30,13 @@ export default function ScrollToTopButton() {
   };
 
   return (
-    <button className={`${isVisible ? "block" : "hidden"} shadow-lg fixed z-50 bottom-32 -right-10 sm:bottom-40 sm:-right-4  bg-gray-100 hover:bg-gray-200 text-gray-900 hover:text-blue-600 font-semibold py-1 px-4 rounded-xl -rotate-90`} onClick={scrollToTop} title="Scroll to Top">
+    <button
+      className={`${
+        isVisible ? "block" : "hidden"
+      } shadow-lg fixed z-50 bottom-32 -right-10 sm:bottom-40 sm:-right-4  bg-gray-100 hover:bg-gray-200 text-gray-900 hover:text-blue-600 font-semibold py-1 px-4 rounded-xl -rotate-90`}
+      onClick={scrollToTop}
+      title="Scroll to Top"
+    >
       <div> ------ Scroll to top</div>
     </button>
   );

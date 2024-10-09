@@ -10,7 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = "postgres://default:zdgVDqs3Gr0b@ep-patient-union-a445tm0g-pooler.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require&pgbouncer=true&connect_timeout=15"
+  url      = env("DATABASE_URL")
 }
 
 model Usert {
@@ -32,10 +32,11 @@ model Blogt {
   description    String?
   slug           String
   content        String?  @db.Text
-  image          String? // Assuming the image URL will be stored as a string
-  published      String
+  image          String? 
+  published      String   @default("pending")
   publishDate    DateTime
-  delete_request String?
+  scheduledAt    DateTime?
+  delete_request String? // Make sure this field exists
   createdAt      DateTime @default(now())
   author         Usert    @relation("UserToBlogt", fields: [author_id], references: [id])
   author_id      Int
@@ -49,15 +50,17 @@ model Bloglivet {
   description    String?
   slug           String
   content        String?  @db.Text
-  image          String? // Assuming the image URL will be stored as a string
+  image          String? 
   published      String
   publishDate    DateTime
-  delete_request String?
   createdAt      DateTime @default(now())
   author         Usert    @relation("UserToBloglivet", fields: [author_id], references: [id])
   author_id      Int
   featuredpost   String
+  delete_request String? // Make sure this field exists here as well
 }
+
+
 
 model Favicont {
   id    Int     @id @default(autoincrement())
@@ -105,8 +108,9 @@ model TutorialSubtopicLive {
 }
 
 model Category {
-  id        Int             @id @default(autoincrement())
-  name      String          @unique
-  slug      String   @unique
-  isActive  Boolean  @default(true)
+  id        Int     @id @default(autoincrement())
+  name      String
+  slug      String  @unique
+  isActive  Boolean @default(true)
+  // other fields
 }

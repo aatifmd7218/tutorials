@@ -66,7 +66,7 @@ export default function FeaturedPosts() {
         Featured Posts
       </h1>
       <div className="space-y-4">
-        {blogData.map((blog, index) => (
+        {blogData?.map((blog, index) => (
           <div
             key={index}
             className="border-2 px-2 rounded-lg h-[120px] flex justify-between items-center"
