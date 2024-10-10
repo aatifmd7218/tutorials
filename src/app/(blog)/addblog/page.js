@@ -147,8 +147,8 @@ const AddBlog = () => {
           return;
         }
 
-          const category = categories.find(cat => cat.id === selectedCategory);
-          const categoryName = category ? category.name : "";
+        const category = categories.find((cat) => cat.id === selectedCategory);
+        const categoryName = category ? category.name : "";
 
         const formData = new FormData();
         formData.append("title", title);
@@ -163,9 +163,12 @@ const AddBlog = () => {
         formData.append("featuredPost", featuredPost);
         formData.append("categoryId", selectedCategory);
         formData.append("categoryName", categoryName);
-
-        const response = await fetch("/api/addblog", {
+        formData.append("apiName", "addblog");
+        const response = await fetch("/api/combinedapi", {
           method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
           body: formData,
           credentials: "include",
         });
