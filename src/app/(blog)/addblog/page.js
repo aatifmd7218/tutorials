@@ -152,6 +152,9 @@ const AddBlog = () => {
             return;
           }
 
+          const category = categories.find(cat => cat.id === selectedCategory);
+          const categoryName = category ? category.name : "";
+
         const formData = new FormData();
         formData.append("title", title);
         formData.append("desc", desc);
@@ -163,7 +166,8 @@ const AddBlog = () => {
         formData.append("publishDate", publishDateValue.toISOString());
         formData.append("authorId", selectedUser.id);
         formData.append("featuredPost", featuredPost);
-        formData.append("category", selectedCategory);
+        formData.append("categoryId", selectedCategory);
+        formData.append("categoryName", categoryName);
 
         const response = await fetch("/api/addblog", {
           method: "POST",

@@ -40,6 +40,13 @@ const AllBlogAdminTable = () => {
         Cell: ({ cell }) => <div>{cell.getValue() === "Y" ? "Yes" : "No"}</div>,
       },
       {
+        accessorKey: "categoryName",
+        header: "category",
+        size: 40,
+        Cell: ({ cell }) => <div>{cell.getValue()}</div>,
+      },
+
+      {
         accessorKey: "delete_request",
         header: "Delete Request",
         size: 40,

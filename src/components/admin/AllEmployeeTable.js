@@ -7,6 +7,7 @@ import { EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 const AllEmployeeTable = () => {
   const [employeesData, setEmployeesData] = useState([]);
   const [username, setUsername] = useState("");
+  const [authorName, setAuthorName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
@@ -122,6 +123,7 @@ const AllEmployeeTable = () => {
             apiName: "updateemployee",
             selectedId,
             username,
+            authorName,
             email,
             password,
           }),
@@ -210,7 +212,7 @@ const AllEmployeeTable = () => {
       </div>
       <dialog id="update_modal" className="modal">
         <div className="modal-box w-12/12 max-w-6xl md:w-6/12 md:max-w-md">
-          <h3 className="font-bold text-lg">Update Employee</h3>
+          <h3 className="font-bold text-lg">Update Author</h3>
           <label className="form-control w-full">
             <div className="label">
               <span className="label-text">Username</span>
@@ -221,6 +223,20 @@ const AllEmployeeTable = () => {
               name="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              className="input input-bordered w-full placeholder-gray-500"
+            />
+          </label>
+
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text">Author Name</span>
+            </div>
+            <input
+              type="text"
+              id="authorname"
+              name="authorname"
+              value={authorName}
+              onChange={(e) => setAuthorName(e.target.value)}
               className="input input-bordered w-full placeholder-gray-500"
             />
           </label>

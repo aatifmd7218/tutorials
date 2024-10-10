@@ -8,7 +8,6 @@ import MobileNavbar from "./MobileNavbar";
 import Link from "next/link";
 import React from "react";
 
-
 export default function Navbar({ setSelectedCategory }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
@@ -37,12 +36,13 @@ export default function Navbar({ setSelectedCategory }) {
           throw new Error("Failed to fetch categories");
         }
         const data = await response.json();
-        const activeCats = data.filter((cat) => cat.isActive)
-        .map((cat) => ({
-          label: cat.name,
-          href: `/${cat.slug}`, // Adjust the href as needed
-          current: false,
-        }));
+        const activeCats = data
+          .filter((cat) => cat.isActive)
+          .map((cat) => ({
+            label: cat.name,
+            href: `/${cat.slug}`, // Adjust the href as needed
+            current: false,
+          }));
         setActiveCategories(activeCats);
       } catch (error) {
         console.error(error.message);
@@ -59,11 +59,14 @@ export default function Navbar({ setSelectedCategory }) {
     setIsDropdownOpen(!isDropdownOpen);
   };
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category); 
-    setIsDropdownOpen(false); 
+    setSelectedCategory(category);
+    setIsDropdownOpen(false);
   };
 
-  const combinedNavigationItems = [...staticNavigationItems, ...activeCategories];
+  const combinedNavigationItems = [
+    ...staticNavigationItems,
+    ...activeCategories,
+  ];
 
   const handleSignOut = () => {
     localStorage.removeItem("session");
@@ -127,7 +130,6 @@ export default function Navbar({ setSelectedCategory }) {
                               verticalAlign: "middle",
                               alignItems: "center", // Ensure alignment is centered
                             }}
-                            className={item.current ? "text-blue-500" : ""}
                           >
                             <Link href={item.href}>
                               <b>{item.label}</b>

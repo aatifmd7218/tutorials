@@ -23,12 +23,18 @@ export async function GET(req) {
             authorName: true,
           },
         },
+        category: { // Include category details
+          select: {
+            name: true, // Assuming 'name' is the field for category name
+          },
+        },
       },
     });
 
     const processedBlogs = blogs.map(blog => ({
       ...blog,
-      authorName: blog.author?.authorName || "Unknown", 
+      authorName: blog.author?.authorName || "Unknown",
+      categoryName: blog.category?.name || "Uncategorized", 
     }));
 
     return NextResponse.json({ result: processedBlogs }, { status: 200 });

@@ -16,6 +16,7 @@ export async function POST(req) {
     const publishDate = data.get("publishDate"); // Get publishDate from FormData
     const authorId = data.get("authorId");
     const featuredPost = data.get("featuredPost");
+    const categoryId = data.get("categoryId");
     let newBlog;
     let slug;
 
@@ -47,6 +48,7 @@ export async function POST(req) {
         published,
         author_id: parseInt(authorId),
         featuredpost: featuredPost,
+        category_id: parseInt(categoryId), 
       },
       include: { // Author ka data include karo
         author: {

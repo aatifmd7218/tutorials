@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -41,11 +42,11 @@ export default function BlogLists({ blogData, selectedCategory  }) {
   
   const filteredBlogs = selectedCategory
   ? blogData.filter(blog => blog.category === selectedCategory)
-  : blogData;
+  : blogData || [];
 
   return (
     <div className="space-y-10">
-      {filteredBlogs &&
+      {Array.isArray(filteredBlogs)  &&
         filteredBlogs.map((blog) => (
           <div key={blog.id} className="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
             {blog.image && imageData[blog.id] && (

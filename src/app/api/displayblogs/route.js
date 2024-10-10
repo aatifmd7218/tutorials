@@ -23,7 +23,8 @@ export async function GET(req) {
         combined.bloglive_id,
         combined.featuredpost,
         combined."publishDate",
-        u."authorName" AS "authorName"
+        u."authorName" AS "authorName",
+        c."name" AS "categoryName"
       FROM (
         SELECT
           b.id,
@@ -37,7 +38,8 @@ export async function GET(req) {
           b.author_id,
           b.bloglive_id,
           b.featuredpost,
-          b."publishDate"
+          b."publishDate",
+          b."category_id"
         FROM public."Blogt" b
 
         UNION ALL
@@ -54,12 +56,14 @@ export async function GET(req) {
           bl.author_id,
           null AS bloglive_id,
           bl.featuredpost,
-          bl."publishDate"
+          bl."publishDate",
+          bl."category_id"
         FROM public."Bloglivet" bl
         LEFT JOIN public."Blogt" b ON bl.id = b.bloglive_id
         WHERE b.bloglive_id IS NULL
       ) AS combined
       LEFT JOIN public."Usert" u ON combined.author_id = u.id
+      LEFT JOIN public."Category" c ON combined.category_id = c.id
       ORDER BY combined.title;
     `;
     

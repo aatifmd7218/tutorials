@@ -340,8 +340,15 @@ export async function POST(req, res) {
             slug: blog.slug,
             published: "Y",
             delete_request: blog.delete_request,
-            author_id: blog.author_id,
             featuredpost: blog.featuredpost,
+             // Establishing the relation with Author
+             author: {
+              connect: { id: blog.author_id },
+            },
+            // Establishing the relation with Category
+            category: {
+              connect: { id: blog.category_id },
+            },
           },
         });
 
@@ -370,8 +377,15 @@ export async function POST(req, res) {
               published: "Y",
               image: blog.image,
               delete_request: blog.delete_request,
-              author_id: blog.author_id,
               featuredpost: blog.featuredpost,
+               // Establishing the relation with Author
+            author: {
+              connect: { id: blog.author_id },
+            },
+            // Establishing the relation with Category
+            category: {
+              connect: { id: blog.category_id },
+            },
             },
           });
         } else {
@@ -384,8 +398,15 @@ export async function POST(req, res) {
               content: blog.content,
               published: "Y",
               delete_request: blog.delete_request,
-              author_id: blog.author_id,
               featuredpost: blog.featuredpost,
+               // Establishing the relation with Author
+            author: {
+              connect: { id: blog.author_id },
+            },
+            // Establishing the relation with Category
+            category: {
+              connect: { id: blog.category_id },
+            },
             },
           });
         }

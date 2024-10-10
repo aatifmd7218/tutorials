@@ -32,6 +32,11 @@ const EditBlog = () => {
   const [blog, setBlog] = useState();
   const [blogLiveId, setBlogLiveId] = useState(null);
   const [featuredPost, setFeaturedPost] = useState("");
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [published, setPublished] = useState("N");
+  const [publishType, setPublishType] = useState("now");
+  const [publishDate, setPublishDate] = useState(new Date());
 
   const { data: session, status } = useSession();
 
@@ -111,6 +116,24 @@ const EditBlog = () => {
     }
   }, [blog, users]);
 
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch("/api/categories");
+      if (!response.ok) {
+        throw new Error("Failed to fetch categories");
+      }
+      const data = await response.json();
+      setCategories(data); // Make sure to use the same state for both
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+  
+
   if (status === "loading") {
     return <div></div>;
   }
@@ -123,6 +146,14 @@ const EditBlog = () => {
     setFeaturedPost(event.target.value);
   };
 
+  const handleCategoryChange = (event) => {
+    setSelectedCategory(event.target.value); 
+  };
+  
+  const handlePublishTypeChange = (e) => {
+    setPublishType(e.target.value);
+  };
+
   const handleSelectChange = (event) => {
     setSelectedUserName(event.target.value);
     const user = users.find((user) => user.username === event.target.value);
@@ -130,6 +161,7 @@ const EditBlog = () => {
       setAuthorId(user.id);
     }
   };
+
 
   const handleImageChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -140,6 +172,17 @@ const EditBlog = () => {
   const handleBlogUpdate = async (e) => {
     try {
       e.preventDefault();
+
+      const publishDateValue = publishType === "now" ? new Date() : publishDate;
+      if (!(publishDateValue instanceof Date) || isNaN(publishDateValue)) {
+        console.error("Invalid publish date");
+        setFormSubmitted(false);
+        return;
+      }
+
+      const category = categories.find(cat => cat.id === selectedCategory);
+      const categoryName = category ? category.name : "";
+
       const formData = new FormData();
       formData.append("title", title);
       formData.append("description", desc);
@@ -149,9 +192,12 @@ const EditBlog = () => {
       formData.append("selectedId", selectedId);
       formData.append("previousimage", previousimage);
       formData.append("published", searchParams.get("published"));
+      formData.append("publishDate", publishDateValue.toISOString());
       formData.append("author_id", authorId);
       formData.append("blogLiveId", blogLiveId);
       formData.append("featuredPost", featuredPost);
+      formData.append("categoryId", selectedCategory);
+      formData.append("categoryName", categoryName);
 
       const response = await fetch("/api/updateblog", {
         method: "PUT",
@@ -183,10 +229,7 @@ const EditBlog = () => {
                 <h1 className="pt-4 text-center text-3xl font-semibold">
                   Edit Blog Details
                 </h1>
-                <label className="form-control w-full">
-                  <div className="label">
-                    <span className="label-text">Title</span>
-                  </div>
+               
                   <input
                     type="text"
                     id="title"
@@ -195,12 +238,9 @@ const EditBlog = () => {
                     onChange={(e) => setTitle(e.target.value)}
                     className="input input-bordered w-full placeholder-gray-500"
                   />
-                </label>
+              
 
-                <label className="form-control w-full">
-                  <div className="label">
-                    <span className="label-text">Meta Description</span>
-                  </div>
+           
                   <textarea
                     type="text"
                     id="desc"
@@ -210,13 +250,9 @@ const EditBlog = () => {
                     className="textarea textarea-bordered placeholder-gray-500"
                     placeholder="Meta Description"
                   ></textarea>
-                </label>
+        
 
-                <label className="form-control w-full">
-                  <div className="label">
-                    <span className="label-text">Blog Content</span>
-                  </div>
-                </label>
+            
 
                 <DynamicSunEditor
                   onChange={setContent}
@@ -256,30 +292,21 @@ const EditBlog = () => {
                     backgroundColor: "red", // Set background color
                   }}
                 />
-                <div className="mt-6">
-                  <label
-                    htmlFor="image"
-                    className="p-2 border border-gray-300 cursor-pointer text-gray-500 hover:text-blue-700"
-                  >
-                    <span>
-                      {imageName ? imageName : "Upload New Blog Image"}
-                    </span>
-                    <input
-                      type="file"
-                      id="image"
-                      name="image"
-                      onChange={handleImageChange}
-                      className="hidden"
-                    />
-                  </label>
-                </div>
-
-                <label className="form-control w-full">
-                  <div className="label">
-                    <span className="label-text">Is Featured Post?</span>
-                  </div>
+               
+                <label
+                  htmlFor="image"
+                  className="p-2 border border-gray-300 cursor-pointer text-gray-500 hover:text-blue-700"
+                >
+                  <span>{imageName ? imageName : "Upload Blog Image"}</span>
+                  <input
+                    type="file"
+                    id="image"
+                    name="image"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
                 </label>
-
+   
                 <select
                   onChange={handleFeaturedPostChange}
                   value={featuredPost || ""}
@@ -300,7 +327,7 @@ const EditBlog = () => {
                 <select
                   onChange={handleSelectChange}
                   value={selectedUserName || ""}
-                  className="mt-6 select select-bordered w-full"
+                  className=" select select-bordered w-full"
                 >
                   <option disabled value="">
                     Assign to Employee?
@@ -314,6 +341,49 @@ const EditBlog = () => {
                     </option>
                   )}
                 </select>
+
+                <select
+                    onChange={handleCategoryChange}
+                    value={selectedCategory || ""}
+                    className="select select-bordered w-full"
+                    required
+                  >
+                    <option disabled value="">
+                      Add category
+                    </option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+
+                  
+                  
+                  <select
+                    value={publishType}
+                    onChange={handlePublishTypeChange}
+                    className="mt-2 select select-bordered w-full "
+                  >
+                    <option value="now">Publish Now</option>
+                    <option value="date">Select Date</option>
+                  </select>
+
+                  {publishType === "date" && (
+                    <DatePicker
+                    selected={publishDate}
+                    onChange={(date) => setPublishDate(date)}
+                    showTimeSelect
+                    timeFormat="HH:mm"
+                    timeIntervals={5}
+                    dateFormat="MMMM d, yyyy h:mm aa"
+                    timeCaption="Time"
+                    className="mt-4 input input-bordered w-full max-w-xs"
+                    minDate={new Date()}
+
+                    />
+                  )}
+              
 
                 <div className="flex justify-end">
                   <button

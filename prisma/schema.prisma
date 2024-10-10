@@ -41,6 +41,8 @@ model Blogt {
   author_id      Int
   bloglive_id    Int?
   featuredpost   String
+  category       Category  @relation("BlogCategory", fields: [category_id], references: [id]) // New category relation
+  category_id    Int 
 }
 
 model Bloglivet {
@@ -57,6 +59,8 @@ model Bloglivet {
   author         Usert    @relation("UserToBloglivet", fields: [author_id], references: [id])
   author_id      Int
   featuredpost   String
+  category       Category  @relation("BlogLiveCategory", fields: [category_id], references: [id]) // New category relation
+  category_id    Int   
 }
 
 model Favicont {
@@ -109,4 +113,6 @@ model Category {
   name      String          @unique
   slug      String   @unique
   isActive  Boolean  @default(true)
+  blogs     Blogt[]         @relation("BlogCategory") // Relation to Blogt
+  blogslive Bloglivet[]      @relation("BlogLiveCategory") // Relation to Bloglivet
 }

@@ -23,6 +23,8 @@ export async function PUT(req) {
     let selectedId = data.get("selectedId");
     selectedId = parseInt(selectedId);
     const previousimage = data.get("previousimage");
+    const publishDate = data.get("publishDate"); // Retrieve publishDate
+    const category_id = data.get("categoryId");
     let blob;
     if (!image) {
       return NextResponse.json({ success1: false });
@@ -43,6 +45,31 @@ export async function PUT(req) {
       published === "Y"
     ) {
       slug = `${slug}-00000`;
+    }
+
+    const originalBlog = await prisma.blogt.findUnique({
+      where: { id: selectedId },
+    });
+
+    let publishDateObj;
+    if (publishDate) {
+      publishDateObj = new Date(publishDate);
+      if (isNaN(publishDateObj)) {
+        return NextResponse.json(
+          { error: "Invalid publishDate" },
+          { status: 400 }
+        );
+      }
+    } else {
+      publishDateObj = originalBlog.publishDate;
+    }
+
+    let categoryId = category_id ? parseInt(category_id, 10) : originalBlog.category_id;
+    if (isNaN(categoryId)) {
+      return NextResponse.json(
+        { error: "Invalid category_id" },
+        { status: 400 }
+      );
     }
 
     if (published === "Y") {
@@ -120,6 +147,8 @@ export async function PUT(req) {
             author_id: parseInt(author_id),
             bloglive_id: selectedId,
             featuredpost: featuredPost,
+            publishDate: publishDateObj, // Include publishDate
+            category_id: categoryId, 
           },
         });
       } else {
@@ -133,6 +162,8 @@ export async function PUT(req) {
             published: "N",
             author_id: parseInt(author_id),
             featuredpost: featuredPost,
+            publishDate: publishDateObj, // Include publishDate
+            category_id: categoryId, 
           },
         });
       }
@@ -156,6 +187,8 @@ export async function PUT(req) {
             author_id: parseInt(author_id),
             bloglive_id: selectedId,
             featuredpost: featuredPost,
+            publishDate: publishDateObj, // Include publishDate
+            category_id: categoryId, 
           },
         });
       } else {
@@ -170,6 +203,8 @@ export async function PUT(req) {
             published: "N",
             author_id: parseInt(author_id),
             featuredpost: featuredPost,
+            publishDate: publishDateObj, // Include publishDate
+            category_id: categoryId, 
           },
         });
       }
