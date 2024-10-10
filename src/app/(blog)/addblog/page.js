@@ -163,12 +163,9 @@ const AddBlog = () => {
         formData.append("featuredPost", featuredPost);
         formData.append("categoryId", selectedCategory);
         formData.append("categoryName", categoryName);
-        formData.append("apiName", "addblog");
-        const response = await fetch("/api/combinedapi", {
+        
+        const response = await fetch("/api/addblog", {
           method: "POST",
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
           body: formData,
           credentials: "include",
         });
