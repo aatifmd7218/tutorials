@@ -33,7 +33,7 @@ const EditBlog = () => {
   const [blogLiveId, setBlogLiveId] = useState(null);
   const [featuredPost, setFeaturedPost] = useState("");
   const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(""); 
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [published, setPublished] = useState("N");
   const [publishType, setPublishType] = useState("now");
   const [publishDate, setPublishDate] = useState(new Date());
@@ -128,11 +128,10 @@ const EditBlog = () => {
       console.error(error);
     }
   };
-  
+
   useEffect(() => {
     fetchCategories();
   }, []);
-  
 
   if (status === "loading") {
     return <div></div>;
@@ -147,9 +146,9 @@ const EditBlog = () => {
   };
 
   const handleCategoryChange = (event) => {
-    setSelectedCategory(event.target.value); 
+    setSelectedCategory(event.target.value);
   };
-  
+
   const handlePublishTypeChange = (e) => {
     setPublishType(e.target.value);
   };
@@ -161,7 +160,6 @@ const EditBlog = () => {
       setAuthorId(user.id);
     }
   };
-
 
   const handleImageChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -180,7 +178,7 @@ const EditBlog = () => {
         return;
       }
 
-      const category = categories.find(cat => cat.id === selectedCategory);
+      const category = categories.find((cat) => cat.id === selectedCategory);
       const categoryName = category ? category.name : "";
 
       const formData = new FormData();
@@ -217,186 +215,181 @@ const EditBlog = () => {
 
   return (
     <>
-      <div className=" px-6 py-10 sm:px-8 sm:py-16 ">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-10 sm:gap-x-10">
-          <div className=" col-span-3 space-y-10">
-            <SideNav />
-          </div>
-
-          <div className="col-span-9">
-            <div className="card w-full bg-base-100 rounded-md">
-              <form className="card-body">
-                <h1 className="pt-4 text-center text-3xl font-semibold">
-                  Edit Blog Details
-                </h1>
-               
-                  <input
-                    type="text"
-                    id="title"
-                    name="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="input input-bordered w-full placeholder-gray-500"
-                  />
-              
-
-           
-                  <textarea
-                    type="text"
-                    id="desc"
-                    name="desc"
-                    value={desc}
-                    onChange={(e) => setDesc(e.target.value)}
-                    className="textarea textarea-bordered placeholder-gray-500"
-                    placeholder="Meta Description"
-                  ></textarea>
-        
-
-            
-
-                <DynamicSunEditor
-                  onChange={setContent}
-                  setContents={content}
-                  placeholder="Blog Content"
-                  className="text-black"
-                  height="300px"
-                  setOptions={{
-                    height: "100%", // Use px unit for height
-                    buttonList: [
-                      ["undo", "redo"],
-                      [
-                        "bold",
-                        "underline",
-                        "italic",
-                        "strike",
-                        "subscript",
-                        "superscript",
-                      ],
-                      ["removeFormat"],
-                      ["outdent", "indent"],
-                      ["fullScreen", "showBlocks", "codeView"],
-                      ["preview", "print"],
-                      ["link", "image", "video"],
-                      [
-                        "font",
-                        "fontSize",
-                        "formatBlock",
-                        "align",
-                        "list",
-                        "table",
-                      ],
-                      ["fontColor", "hiliteColor", "horizontalRule"],
-                    ],
-                    font: ["Arial", "Courier New"], // Example: specify fonts
-                    fontColor: "red", // Set font color
-                    backgroundColor: "red", // Set background color
-                  }}
-                />
-               
-                <label
-                  htmlFor="image"
-                  className="p-2 border border-gray-300 cursor-pointer text-gray-500 hover:text-blue-700"
-                >
-                  <span>{imageName ? imageName : "Upload Blog Image"}</span>
-                  <input
-                    type="file"
-                    id="image"
-                    name="image"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                </label>
-   
-                <select
-                  onChange={handleFeaturedPostChange}
-                  value={featuredPost || ""}
-                  className="select select-bordered w-full"
-                >
-                  <option disabled value="">
-                    featured post?
-                  </option>
-                  <option>yes</option>
-                  <option>no</option>
-                  {featuredPost === "" && (
-                    <option disabled style={{ display: "none" }}>
-                      featured post?
-                    </option>
-                  )}
-                </select>
-
-                <select
-                  onChange={handleSelectChange}
-                  value={selectedUserName || ""}
-                  className=" select select-bordered w-full"
-                >
-                  <option disabled value="">
-                    Assign to Employee?
-                  </option>
-                  {users.map((user) => (
-                    <option key={user.username}>{user.username}</option>
-                  ))}
-                  {selectedUserName === "" && (
-                    <option disabled style={{ display: "none" }}>
-                      Assign to Employee?
-                    </option>
-                  )}
-                </select>
-
-                <select
-                    onChange={handleCategoryChange}
-                    value={selectedCategory || ""}
-                    className="select select-bordered w-full"
-                    required
-                  >
-                    <option disabled value="">
-                      Add category
-                    </option>
-                    {categories.map((category) => (
-                      <option key={category.id} value={category.id}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  
-                  
-                  <select
-                    value={publishType}
-                    onChange={handlePublishTypeChange}
-                    className="mt-2 select select-bordered w-full "
-                  >
-                    <option value="now">Publish Now</option>
-                    <option value="date">Select Date</option>
-                  </select>
-
-                  {publishType === "date" && (
-                    <DatePicker
-                    selected={publishDate}
-                    onChange={(date) => setPublishDate(date)}
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={5}
-                    dateFormat="MMMM d, yyyy h:mm aa"
-                    timeCaption="Time"
-                    className="mt-4 input input-bordered w-full max-w-xs"
-                    minDate={new Date()}
-
-                    />
-                  )}
-              
-
-                <div className="flex justify-end">
-                  <button
-                    onClick={handleBlogUpdate}
-                    className="btn bg-[#dc2626] w-20 text-white"
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
+      <div className="card w-full bg-base-100 rounded-md">
+        <form className="card-body">
+          <h1 className="pt-4 text-center text-3xl font-semibold">
+            Edit Blog Details
+          </h1>
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text">Title</span>
             </div>
+            <input
+              type="text"
+              id="title"
+              name="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="input input-bordered w-full placeholder-gray-500"
+            />
+          </label>
+
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text">Meta Description</span>
+            </div>
+            <textarea
+              type="text"
+              id="desc"
+              name="desc"
+              value={desc}
+              onChange={(e) => setDesc(e.target.value)}
+              className="textarea textarea-bordered placeholder-gray-500"
+              placeholder="Meta Description"
+            ></textarea>
+          </label>
+
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text">Blog Content</span>
+            </div>
+          </label>
+
+          <DynamicSunEditor
+            onChange={setContent}
+            setContents={content}
+            placeholder="Blog Content"
+            className="text-black"
+            height="300px"
+            setOptions={{
+              height: "100%", // Use px unit for height
+              buttonList: [
+                ["undo", "redo"],
+                [
+                  "bold",
+                  "underline",
+                  "italic",
+                  "strike",
+                  "subscript",
+                  "superscript",
+                ],
+                ["removeFormat"],
+                ["outdent", "indent"],
+                ["fullScreen", "showBlocks", "codeView"],
+                ["preview", "print"],
+                ["link", "image", "video"],
+                ["font", "fontSize", "formatBlock", "align", "list", "table"],
+                ["fontColor", "hiliteColor", "horizontalRule"],
+              ],
+              font: ["Arial", "Courier New"], // Example: specify fonts
+              fontColor: "red", // Set font color
+              backgroundColor: "red", // Set background color
+            }}
+          />
+          <div className="mt-6">
+            <label
+              htmlFor="image"
+              className="p-2 border border-gray-300 cursor-pointer text-gray-500 hover:text-blue-700"
+            >
+              <span>{imageName ? imageName : "Upload New Blog Image"}</span>
+              <input
+                type="file"
+                id="image"
+                name="image"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </label>
           </div>
-        </div>
+
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text">Is Featured Post?</span>
+            </div>
+          </label>
+
+          <select
+            onChange={handleFeaturedPostChange}
+            value={featuredPost || ""}
+            className="select select-bordered w-full"
+          >
+            <option disabled value="">
+              featured post?
+            </option>
+            <option>yes</option>
+            <option>no</option>
+            {featuredPost === "" && (
+              <option disabled style={{ display: "none" }}>
+                featured post?
+              </option>
+            )}
+          </select>
+
+          <select
+            onChange={handleSelectChange}
+            value={selectedUserName || ""}
+            className="mt-6 select select-bordered w-full"
+          >
+            <option disabled value="">
+              Assign to Employee?
+            </option>
+            {users.map((user) => (
+              <option key={user.username}>{user.username}</option>
+            ))}
+            {selectedUserName === "" && (
+              <option disabled style={{ display: "none" }}>
+                Assign to Employee?
+              </option>
+            )}
+          </select>
+          <select
+            onChange={handleCategoryChange}
+            value={selectedCategory || ""}
+            className="select select-bordered w-full"
+            required
+          >
+            <option disabled value="">
+              Add category
+            </option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={publishType}
+            onChange={handlePublishTypeChange}
+            className="mt-2 select select-bordered w-full "
+          >
+            <option value="now">Publish Now</option>
+            <option value="date">Select Date</option>
+          </select>
+
+          {publishType === "date" && (
+            <DatePicker
+              selected={publishDate}
+              onChange={(date) => setPublishDate(date)}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={5}
+              dateFormat="MMMM d, yyyy h:mm aa"
+              timeCaption="Time"
+              className="mt-4 input input-bordered w-full max-w-xs"
+              minDate={new Date()}
+            />
+          )}
+
+          <div className="flex justify-end">
+            <button
+              onClick={handleBlogUpdate}
+              className="btn bg-[#dc2626] w-20 text-white"
+            >
+              Save
+            </button>
+          </div>
+        </form>
       </div>
     </>
   );

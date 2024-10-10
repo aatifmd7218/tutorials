@@ -1,5 +1,4 @@
 "use client";
-import SideNav from "@/components/sidebar/SideNav";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 
@@ -62,44 +61,36 @@ const Page = () => {
           </div>
         </div>
       )}
-      <div className=" px-6 py-10 sm:px-8 sm:py-16 ">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-y-10 sm:gap-x-10">
-          <div className=" col-span-3 space-y-10">
-            <SideNav />
-          </div>
-          <div className="col-span-9">
-            <div className="card w-full bg-base-100 rounded-md">
-              <form className="card-body">
-                <h1 className="pt-4 text-center text-3xl font-semibold">
-                  Add Favicon
-                </h1>
 
-                <label
-                  htmlFor="image"
-                  className="mt-6 p-2 border border-gray-300 cursor-pointer text-gray-500 hover:text-blue-700"
-                >
-                  <span>{imageName ? imageName : "Upload Favicon Image"}</span>
-                  <input
-                    type="file"
-                    id="image"
-                    name="image"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                </label>
+      <div className="card w-full bg-base-100 rounded-md">
+        <form className="card-body">
+          <h1 className="pt-4 text-center text-3xl font-semibold">
+            Add Favicon
+          </h1>
 
-                <div className="flex justify-end">
-                  <button
-                    onSubmit={handleAddFavicon}
-                    className="btn bg-[#dc2626] w-20 text-white"
-                  >
-                    Save
-                  </button>
-                </div>
-              </form>
-            </div>
+          <label
+            htmlFor="image"
+            className="mt-6 p-2 border border-gray-300 cursor-pointer text-gray-500 hover:text-blue-700"
+          >
+            <span>{imageName ? imageName : "Upload Favicon Image"}</span>
+            <input
+              type="file"
+              id="image"
+              name="image"
+              onChange={handleImageChange}
+              className="hidden"
+            />
+          </label>
+
+          <div className="flex justify-end">
+            <button
+              onSubmit={handleAddFavicon}
+              className="btn bg-[#dc2626] w-20 text-white"
+            >
+              Save
+            </button>
           </div>
-        </div>
+        </form>
       </div>
     </>
   );

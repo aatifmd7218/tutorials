@@ -7,7 +7,7 @@ export default function Page() {
   return (
     <>
       <Head>
-        <title>Blog Page</title>
+        <title>Blog Page </title>
         <meta name="description" content="Blog Page description" />
         <meta
           name="keywords"

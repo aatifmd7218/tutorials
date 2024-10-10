@@ -6,16 +6,14 @@ import path from "path";
 import fetch from "node-fetch";
 import { put } from "@vercel/blob";
 
-
 const prisma = new PrismaClient();
 
 export const dynamic = "force-dynamic";
 
 async function deleteBlob(blobName) {
-  const token =
-    "VvA3XP8hT39P2c1JQ2vfRhQJ"; 
-    
-    // Replace with your Vercel token
+  const token = "VvA3XP8hT39P2c1JQ2vfRhQJ";
+
+  // Replace with your Vercel token
   const projectId = "prj_0Ef6PmzBdYoW4aPREbzAk1ZTXIQy"; // Replace with your Vercel project ID
 
   try {
@@ -58,7 +56,7 @@ export async function POST(req, res) {
   const contentType = req.headers.get("Content-Type");
   if (contentType.includes("application/json")) {
     body = await req.json();
-    ({ apiName} = body);
+    ({ apiName } = body);
   } else if (contentType.includes("multipart/form-data")) {
     data = await req.formData();
     apiName = data.get("apiName");
@@ -135,7 +133,7 @@ export async function POST(req, res) {
     }
   } else if (apiName === "updateemployee") {
     try {
-      const { selectedId, authorName,  username, email, password } = body;
+      const { selectedId, authorName, username, email, password } = body;
 
       if (username !== "") {
         await prisma.usert.update({
@@ -146,7 +144,6 @@ export async function POST(req, res) {
         });
       }
 
-      
       if (authorName !== "") {
         await prisma.usert.update({
           where: { id: selectedId },
@@ -287,50 +284,37 @@ export async function POST(req, res) {
     }
   } else if (apiName === "approveblog") {
     try {
-      const { selectedId } = body;
-
-     
+      const { selectedId, scheduledAt } = body;
       const blogId = parseInt(selectedId, 10);
-    if (isNaN(blogId)) {
-      return NextResponse.json(
-        { error: "Invalid blog ID" },
-        { status: 400 }
-      );
-    }
-    const blog = await prisma.blogt.findUnique({
-      where: { id: blogId }// Include author relation if needed
-    });
+      if (isNaN(blogId)) {
+        return NextResponse.json({ error: "Invalid blog ID" }, { status: 400 });
+      }
 
-    if (!blog) {
-      return NextResponse.json(
-        { error: "Blog not found" },
-        { status: 404 }
-      );
-    }
+      const blog = await prisma.blogt.findUnique({
+        where: { id: blogId },
+      });
+
+      if (!blog) {
+        return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+      }
 
       const publishDateObj = blog.publishDate;
-      if (!publishDateObj || isNaN(new Date(publishDateObj))) {
-        return NextResponse.json(
-          { error: "Invalid publishDate in Blogt" },
-          { status: 400 }
-        );
-      }
+      const scheduledDate = scheduledAt ? new Date(scheduledAt) : null;
 
-      const currentDate = new Date();
-      const shouldPublishNow = publishDateObj <= currentDate
-
-
-
-      if (!shouldPublishNow) {
+      if (scheduledDate && scheduledDate > new Date()) {
         await prisma.blogt.update({
           where: { id: blog.id },
-          data: { published: "N" }
+          data: {
+            published: "scheduled",
+            scheduledAt: scheduledDate,
+          },
         });
-        return NextResponse.json({ result: "Blog is scheduled for future publishing" }, { status: 200 });
-      }
-  
-      if (blog.bloglive_id === null) {
-        await prisma.bloglivet.create({
+        return NextResponse.json(
+          { result: "Blog is scheduled for future publishing" },
+          { status: 200 }
+        );
+      } else if (publishDateObj <= new Date()) {
+        const createdBlog = await prisma.bloglivet.create({
           data: {
             title: blog.title,
             description: blog.description,
@@ -341,8 +325,8 @@ export async function POST(req, res) {
             published: "Y",
             delete_request: blog.delete_request,
             featuredpost: blog.featuredpost,
-             // Establishing the relation with Author
-             author: {
+            // Establishing the relation with Author
+            author: {
               connect: { id: blog.author_id },
             },
             // Establishing the relation with Category
@@ -352,71 +336,21 @@ export async function POST(req, res) {
           },
         });
 
-        await prisma.blogt.delete({ where: { id: blog.id } });
-      } else {
-        const liveblog = await prisma.bloglivet.findFirst({
-          where: { id: blog.bloglive_id },
-        });
-        if (
-          blog.image !== null &&
-          blog.image !== "null" &&
-          blog.image !== undefined &&
-          blog.image !== ""
-        ) {
-          const BlobName = getBlobNameFromUrl(liveblog.image);
-
-          deleteBlob(BlobName);
-
-          await prisma.bloglivet.update({
-            where: { id: blog.bloglive_id },
-            data: {
-              title: blog.title,
-              description: blog.description,
-              publishDate: publishDateObj,
-              content: blog.content,
-              published: "Y",
-              image: blog.image,
-              delete_request: blog.delete_request,
-              featuredpost: blog.featuredpost,
-               // Establishing the relation with Author
-            author: {
-              connect: { id: blog.author_id },
-            },
-            // Establishing the relation with Category
-            category: {
-              connect: { id: blog.category_id },
-            },
-            },
-          });
+        if (createdBlog) {
+          await prisma.blogt.delete({ where: { id: blog.id } });
+          return NextResponse.json(
+            { result: "successfully approved and published blog" },
+            { status: 200 }
+          );
         } else {
-          await prisma.bloglivet.update({
-            where: { id: blog.bloglive_id },
-            data: {
-              title: blog.title,
-              description: blog.description,
-              publishDate: publishDateObj,
-              content: blog.content,
-              published: "Y",
-              delete_request: blog.delete_request,
-              featuredpost: blog.featuredpost,
-               // Establishing the relation with Author
-            author: {
-              connect: { id: blog.author_id },
-            },
-            // Establishing the relation with Category
-            category: {
-              connect: { id: blog.category_id },
-            },
-            },
-          });
+          throw new Error("Failed to create live blog entry");
         }
-        await prisma.blogt.delete({ where: { id: blog.id } });
+      } else {
+        return NextResponse.json(
+          { result: "Blog cannot be published yet" },
+          { status: 400 }
+        );
       }
-
-      return NextResponse.json(
-        { result: "successfully approved blog" },
-        { status: 200 }
-      );
     } catch (error) {
       console.error("Error during approving blog:", error);
       return NextResponse.json(
@@ -1155,7 +1089,6 @@ export async function POST(req, res) {
       );
     }
   }
-  
 
   return NextResponse.json({ error: "Invalid API name" }, { status: 400 });
 }
