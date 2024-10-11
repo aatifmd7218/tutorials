@@ -189,7 +189,6 @@ const AddBlog = () => {
         setSelectedUserName(isAdmin ? "" : session.user.username);
         setSelectedCategory("");
         router.push("/allblogadmin");
-        // env change
         setFormSubmitted(false);
       }, 1500);
     } catch (error) {
