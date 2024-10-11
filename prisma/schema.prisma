@@ -64,8 +64,6 @@ model Bloglivet {
   delete_request String?   
 }
 
-
-
 model Favicont {
   id    Int     @id @default(autoincrement())
   image String?

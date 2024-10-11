@@ -37,7 +37,15 @@ const AllBlogAdminTable = () => {
         accessorKey: "published",
         header: "Published",
         size: 40,
-        Cell: ({ cell }) => <div>{cell.getValue() === "Y" ? "Yes" : "No"}</div>,
+        Cell: ({ cell }) => (
+          <div>
+            {cell.getValue() === "Y"
+              ? "Yes"
+              : cell.getValue() === "scheduled"
+              ? "scheduled"
+              : "No"}
+          </div>
+        ),
       },
       {
         accessorKey: "categoryName",
@@ -67,10 +75,14 @@ const AllBlogAdminTable = () => {
         Cell: ({ row }) =>
           row.original.published === "N" && row.original.description !== "" ? (
             <button
-              onClick={() => handleBlogApproval(row, row.original.publishDate)} // Pass scheduledAt here
+              onClick={() => handleBlogApproval(row)} // Pass scheduledAt here
               className="btn bg-[#dc2626] text-white hover:bg-[#dc2626]"
             >
               Approve
+            </button>
+          ) : row.original.published === "scheduled" ? (
+            <button disabled className="btn bg-blue-400 text-white">
+              scheduled
             </button>
           ) : null,
       },
@@ -148,14 +160,37 @@ const AllBlogAdminTable = () => {
     []
   );
 
-  const handleBlogApproval = async (row, scheduledAt) => {
+  const handleBlogApproval = async (row) => {
     try {
       const currentDate = new Date(); // Get the current date and time
-      console.log(row);
       // Compare the scheduled time with the current time
-      if (new Date(scheduledAt) > currentDate) {
+      if (new Date(row.original.publishDate) > currentDate) {
+        const response = await fetch("/api/combinedapi", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.PUBLISHBLOGS_SECRET_TOKEN}`,
+          },
+          body: JSON.stringify({
+            apiName: "approveblogfuture",
+            selectedId: row.original.id,
+          }),
+        });
+
+        const { error, result } = await response.json();
+
         // Notify that it will be published at the scheduled time
-        alert(`Blog will be published on scheduled time: ${scheduledAt}`);
+        if (response.ok) {
+          alert(
+            `Blog will be published on scheduled time: ${new Date(
+              row.original.publishDate
+            )}`
+          );
+          handleGetBlogs();
+        } else {
+          console.log("Approve Blog error:", error);
+          alert(`Error: ${error}`);
+        }
       } else {
         // Publish the blog immediately
         const response = await fetch("/api/combinedapi", {
@@ -167,7 +202,6 @@ const AllBlogAdminTable = () => {
           body: JSON.stringify({
             apiName: "approveblog",
             selectedId: row.original.id,
-            scheduledAt: null, // No need to send scheduled time if it's now
           }),
         });
 

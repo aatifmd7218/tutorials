@@ -45,11 +45,6 @@ export async function POST(req) {
       );
     }
 
-    // Set the initial status if not provided
-    if (!published) {
-      published = "pending"; // Default status for new blogs
-    }
-
     // Create the blog entry in the database
     newBlog = await prisma.blogt.create({
       data: {
@@ -61,7 +56,7 @@ export async function POST(req) {
         published,
         author_id: parseInt(authorId),
         featuredpost: featuredPost,
-        category_id: parseInt(categoryId), 
+        category_id: parseInt(categoryId),
       },
       include: {
         author: {

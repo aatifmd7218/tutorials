@@ -282,9 +282,46 @@ export async function POST(req, res) {
         { status: 500 }
       );
     }
+  } else if (apiName === "approveblogfuture") {
+    try {
+      const { selectedId } = body;
+      const blogId = parseInt(selectedId, 10);
+      if (isNaN(blogId)) {
+        return NextResponse.json({ error: "Invalid blog ID" }, { status: 400 });
+      }
+
+      const blog = await prisma.blogt.findUnique({
+        where: { id: blogId },
+      });
+
+      if (!blog) {
+        return NextResponse.json({ error: "Blog not found" }, { status: 404 });
+      }
+      const publishDateObj = blog.publishDate;
+
+      if (publishDateObj && publishDateObj > new Date()) {
+        await prisma.blogt.update({
+          where: { id: blog.id },
+          data: {
+            published: "scheduled",
+            scheduledAt: publishDateObj,
+          },
+        });
+        return NextResponse.json(
+          { result: "Blog is scheduled for future publishing" },
+          { status: 200 }
+        );
+      }
+    } catch (error) {
+      console.error("Error during approving blog:", error);
+      return NextResponse.json(
+        { error: "Failed to approve blog" },
+        { status: 500 }
+      );
+    }
   } else if (apiName === "approveblog") {
     try {
-      const { selectedId, scheduledAt } = body;
+      const { selectedId } = body;
       const blogId = parseInt(selectedId, 10);
       if (isNaN(blogId)) {
         return NextResponse.json({ error: "Invalid blog ID" }, { status: 400 });
@@ -299,21 +336,8 @@ export async function POST(req, res) {
       }
 
       const publishDateObj = blog.publishDate;
-      const scheduledDate = scheduledAt ? new Date(scheduledAt) : null;
 
-      if (scheduledDate && scheduledDate > new Date()) {
-        await prisma.blogt.update({
-          where: { id: blog.id },
-          data: {
-            published: "scheduled",
-            scheduledAt: scheduledDate,
-          },
-        });
-        return NextResponse.json(
-          { result: "Blog is scheduled for future publishing" },
-          { status: 200 }
-        );
-      } else if (publishDateObj <= new Date()) {
+      if (publishDateObj <= new Date()) {
         const createdBlog = await prisma.bloglivet.create({
           data: {
             title: blog.title,

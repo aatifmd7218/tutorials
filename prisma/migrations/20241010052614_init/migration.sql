@@ -19,13 +19,15 @@ CREATE TABLE "Blogt" (
     "slug" TEXT NOT NULL,
     "content" TEXT,
     "image" TEXT,
-    "published" TEXT NOT NULL,
+    "published" TEXT NOT NULL DEFAULT 'pending',
     "publishDate" TIMESTAMP(3) NOT NULL,
+    "scheduledAt" TIMESTAMP(3),
     "delete_request" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "author_id" INTEGER NOT NULL,
     "bloglive_id" INTEGER,
     "featuredpost" TEXT NOT NULL,
+    "category_id" INTEGER NOT NULL,
 
     CONSTRAINT "Blogt_pkey" PRIMARY KEY ("id")
 );
@@ -40,10 +42,11 @@ CREATE TABLE "Bloglivet" (
     "image" TEXT,
     "published" TEXT NOT NULL,
     "publishDate" TIMESTAMP(3) NOT NULL,
-    "delete_request" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "author_id" INTEGER NOT NULL,
     "featuredpost" TEXT NOT NULL,
+    "category_id" INTEGER NOT NULL,
+    "delete_request" TEXT,
 
     CONSTRAINT "Bloglivet_pkey" PRIMARY KEY ("id")
 );
@@ -104,6 +107,8 @@ CREATE TABLE "TutorialSubtopicLive" (
 CREATE TABLE "Category" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
+    "slug" TEXT NOT NULL,
+    "isActive" BOOLEAN NOT NULL DEFAULT true,
 
     CONSTRAINT "Category_pkey" PRIMARY KEY ("id")
 );
@@ -117,11 +122,20 @@ CREATE UNIQUE INDEX "Usert_username_key" ON "Usert"("username");
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
 
+-- CreateIndex
+CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
+
 -- AddForeignKey
 ALTER TABLE "Blogt" ADD CONSTRAINT "Blogt_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "Usert"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Blogt" ADD CONSTRAINT "Blogt_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Bloglivet" ADD CONSTRAINT "Bloglivet_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "Usert"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Bloglivet" ADD CONSTRAINT "Bloglivet_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "Category"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "TutorialTopic" ADD CONSTRAINT "TutorialTopic_author_id_fkey" FOREIGN KEY ("author_id") REFERENCES "Usert"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

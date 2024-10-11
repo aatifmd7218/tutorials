@@ -5,6 +5,7 @@ import dynamic from "next/dynamic";
 import { useSession } from "next-auth/react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { useRouter } from "next/navigation";
 
 const DynamicSunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
@@ -28,6 +29,8 @@ const AddBlog = () => {
 
   const { data: session, status } = useSession();
   const [isAdmin, setIsAdmin] = useState(false);
+
+  const router = useRouter();
 
   // Fetch users on component mount
   useEffect(() => {
@@ -126,8 +129,8 @@ const AddBlog = () => {
 
     try {
       setTimeout(async () => {
-        // If admin, find the selected user
-        // If author, assign to self
+        //   // If admin, find the selected user
+        //   // If author, assign to self
         const selectedUser = isAdmin
           ? users.find((user) => user.username === selectedUserName)
           : session.user; // Assign to self
@@ -147,8 +150,8 @@ const AddBlog = () => {
           return;
         }
 
-          const category = categories.find(cat => cat.id === selectedCategory);
-          const categoryName = category ? category.name : "";
+        const category = categories.find((cat) => cat.id === selectedCategory);
+        const categoryName = category ? category.name : "";
 
         const formData = new FormData();
         formData.append("title", title);
@@ -175,6 +178,7 @@ const AddBlog = () => {
         if (error) {
           console.log("Blog Added error:", error);
         }
+        console.log(result);
         // Reset form fields
         setTitle("");
         setDesc("");
@@ -184,7 +188,7 @@ const AddBlog = () => {
         setFeaturedPost("");
         setSelectedUserName(isAdmin ? "" : session.user.username);
         setSelectedCategory("");
-        // window.location.href = "/allblogadmin";
+        router.push("/allblogadmin");
         setFormSubmitted(false);
       }, 1500);
     } catch (error) {
