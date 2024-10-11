@@ -2,11 +2,10 @@
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 
-
 const Page = () => {
   const [categoryName, setCategoryName] = useState("");
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const { data: session, status } = useSession();
@@ -116,7 +115,6 @@ const Page = () => {
                 required
               />
             </div>
-
 
             <div className="flex justify-end">
               <button

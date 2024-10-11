@@ -11,11 +11,12 @@ export async function POST(req) {
     const title = data.get("title");
     const desc = data.get("desc");
     const content = data.get("content");
-    let published = data.get("published"); // Published status from the form
+    let published = data.get("published");
     const publishDate = data.get("publishDate");
-    const authorId = data.get("author_id");
+    const authorId = parseInt(data.get("authorId"), 10); // Change to 'authorId'
     const featuredPost = data.get("featuredPost");
-    const categoryId = data.get("categoryId");
+    const categoryId = parseInt(data.get("categoryId"), 10);
+
     let newBlog;
     let slug;
 
@@ -54,9 +55,17 @@ export async function POST(req) {
         publishDate: publishDateObj,
         content,
         published,
-        author_id: parseInt(authorId),
         featuredpost: featuredPost,
-        category_id: parseInt(categoryId),
+        category: {
+          connect: {
+            id: categoryId,
+          },
+        },
+        author: {
+          connect: {
+            id: authorId, // Ensure this is correctly passed
+          },
+        },
       },
       include: {
         author: {
@@ -105,7 +114,7 @@ export async function POST(req) {
       featuredpost: newBlog.featuredpost,
       image: newBlog.image,
       authorName: newBlog.author?.authorName,
-      category_id: newBlog.category_id
+      category_id: newBlog.category_id,
     };
 
     return NextResponse.json({ result: responseData }, { status: 200 });
