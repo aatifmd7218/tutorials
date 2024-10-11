@@ -38,6 +38,7 @@ const EditBlog = () => {
   const [published, setPublished] = useState("N");
   const [publishType, setPublishType] = useState("now");
   const [publishDate, setPublishDate] = useState(new Date());
+  const [formSubmitted, setFormSubmitted] = useState(false); 
 
   const { data: session, status } = useSession();
 
@@ -108,6 +109,7 @@ const EditBlog = () => {
       setAuthorId(blog.author_id);
       setBlogLiveId(blog.bloglive_id ? blog.bloglive_id : null);
       setFeaturedPost(blog.featuredpost);
+      setSelectedCategory(blog.category_id);
 
       const user = users.find((user) => user.id === blog.author_id);
 
@@ -207,17 +209,27 @@ const EditBlog = () => {
 
       if (error !== undefined) {
         console.log("Blog Updated error:", error);
+      }else{
+        window.location.href = "/allblogadmin";
       }
-      window.location.href = "/allblogadmin";
+      setFormSubmitted(false);
     } catch (error) {
       console.error("Blog Update operation error", error);
+      setFormSubmitted(false);
     }
   };
 
   return (
     <>
+      {formSubmitted && (
+        <div className="toast toast-top toast-end z-50">
+          <div className="alert alert-info">
+            <span>Blog Updated Successfully</span>
+          </div>
+        </div>
+      )}
       <div className="card w-full bg-base-100 rounded-md">
-        <form className="card-body">
+        <form className="card-body" onSubmit={handleBlogUpdate}>
           <h1 className="pt-4 text-center text-3xl font-semibold">
             Edit Blog Details
           </h1>
@@ -232,6 +244,7 @@ const EditBlog = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="input input-bordered w-full placeholder-gray-500"
+              required
             />
           </label>
 
@@ -241,12 +254,13 @@ const EditBlog = () => {
             </div>
             <textarea
               type="text"
-              id="desc"
-              name="desc"
+              id="description" // Changed from 'desc'
+              name="description" // Changed from 'desc'
               value={desc}
               onChange={(e) => setDesc(e.target.value)}
               className="textarea textarea-bordered placeholder-gray-500"
               placeholder="Meta Description"
+              required
             ></textarea>
           </label>
 
@@ -263,7 +277,7 @@ const EditBlog = () => {
             className="text-black"
             height="300px"
             setOptions={{
-              height: "100%", // Use px unit for height
+              height: "100%",
               buttonList: [
                 ["undo", "redo"],
                 [
@@ -282,9 +296,9 @@ const EditBlog = () => {
                 ["font", "fontSize", "formatBlock", "align", "list", "table"],
                 ["fontColor", "hiliteColor", "horizontalRule"],
               ],
-              font: ["Arial", "Courier New"], // Example: specify fonts
-              fontColor: "red", // Set font color
-              backgroundColor: "red", // Set background color
+              font: ["Arial", "Courier New"],
+              fontColor: "red",
+              backgroundColor: "red",
             }}
           />
           <div className="mt-6">
@@ -313,35 +327,29 @@ const EditBlog = () => {
             onChange={handleFeaturedPostChange}
             value={featuredPost || ""}
             className="select select-bordered w-full"
+            required
           >
             <option disabled value="">
-              featured post?
+              Featured post?
             </option>
-            <option>yes</option>
-            <option>no</option>
-            {featuredPost === "" && (
-              <option disabled style={{ display: "none" }}>
-                featured post?
-              </option>
-            )}
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
           </select>
 
           <select
             onChange={handleSelectChange}
             value={selectedUserName || ""}
             className="mt-6 select select-bordered w-full"
+            required
           >
             <option disabled value="">
-              Assign to Employee?
+              Assign to author?
             </option>
             {users.map((user) => (
-              <option key={user.username}>{user.username}</option>
-            ))}
-            {selectedUserName === "" && (
-              <option disabled style={{ display: "none" }}>
-                Assign to Employee?
+              <option key={user.id} value={user.username}>
+                {user.username}
               </option>
-            )}
+            ))}
           </select>
           <select
             onChange={handleCategoryChange}
@@ -362,7 +370,7 @@ const EditBlog = () => {
           <select
             value={publishType}
             onChange={handlePublishTypeChange}
-            className="mt-2 select select-bordered w-full "
+            className="mt-2 select select-bordered w-full"
           >
             <option value="now">Publish Now</option>
             <option value="date">Select Date</option>
@@ -384,10 +392,11 @@ const EditBlog = () => {
 
           <div className="flex justify-end">
             <button
-              onClick={handleBlogUpdate}
+              type="submit"
               className="btn bg-[#dc2626] w-20 text-white"
+              disabled={formSubmitted}
             >
-              Save
+              {formSubmitted ? "Saving..." : "Save"}
             </button>
           </div>
         </form>

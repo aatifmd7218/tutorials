@@ -13,7 +13,7 @@ export async function POST(req) {
     const content = data.get("content");
     let published = data.get("published"); // Published status from the form
     const publishDate = data.get("publishDate");
-    const authorId = data.get("authorId");
+    const authorId = data.get("author_id");
     const featuredPost = data.get("featuredPost");
     const categoryId = data.get("categoryId");
     let newBlog;
@@ -105,6 +105,7 @@ export async function POST(req) {
       featuredpost: newBlog.featuredpost,
       image: newBlog.image,
       authorName: newBlog.author?.authorName,
+      category_id: newBlog.category_id
     };
 
     return NextResponse.json({ result: responseData }, { status: 200 });

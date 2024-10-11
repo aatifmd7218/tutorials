@@ -188,7 +188,6 @@ const AddBlog = () => {
         setFeaturedPost("");
         setSelectedUserName(isAdmin ? "" : session.user.username);
         setSelectedCategory("");
-        router.push("/allblogadmin");
         setFormSubmitted(false);
       }, 1500);
     } catch (error) {
