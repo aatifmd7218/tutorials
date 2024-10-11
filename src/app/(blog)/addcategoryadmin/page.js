@@ -47,6 +47,8 @@ const Page = () => {
       if (response.ok) {
         setFormSubmitted(true);
         setCategoryName("");
+        setTitle("");
+        setDescription("");
       } else {
         console.error("Failed to add category");
       }
