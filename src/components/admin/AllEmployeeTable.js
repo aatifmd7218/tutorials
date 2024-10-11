@@ -26,6 +26,17 @@ const AllEmployeeTable = () => {
           </div>
         ),
       },
+      {
+        accessorKey: "authorName",
+        header: "authorName",
+        size: 150,
+        Cell: ({ cell }) => (
+          <div style={{ whiteSpace: "normal", wordBreak: "break-word" }}>
+            {cell.getValue()}
+          </div>
+        ),
+      },
+
 
       {
         accessorKey: "email",
@@ -95,6 +106,7 @@ const AllEmployeeTable = () => {
   const handleEmployeeEdit = async (row) => {
     setSelectedId(row.original.id);
     setUsername(row.original.username);
+    setAuthorName(row.original.authorName);
     setEmail(row.original.email);
   };
 
@@ -233,8 +245,8 @@ const AllEmployeeTable = () => {
             </div>
             <input
               type="text"
-              id="authorname"
-              name="authorname"
+              id="authorName"
+              name="authorName"
               value={authorName}
               onChange={(e) => setAuthorName(e.target.value)}
               className="input input-bordered w-full placeholder-gray-500"

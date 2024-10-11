@@ -414,7 +414,10 @@ export async function POST(req, res) {
         { status: 500 }
       );
     }
-  } else if (apiName === "addfavicon") {
+  }
+
+  
+  else if (apiName === "addfavicon") {
     const image = data.get("image");
     if (typeof image === "object") {
       const favicon = await prisma.favicont.findFirst();

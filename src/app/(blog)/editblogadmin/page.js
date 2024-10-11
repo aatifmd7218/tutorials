@@ -7,6 +7,7 @@ import SideNav from "@/components/sidebar/SideNav";
 import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import CryptoJS from "crypto-js";
+import DatePicker from "react-datepicker";
 
 const DynamicSunEditor = dynamic(() => import("suneditor-react"), {
   ssr: false,
