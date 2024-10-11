@@ -110,7 +110,7 @@ const Page = () => {
                 type="text"
                 id="description"
                 name="description"
-                value={desc}
+                value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="mt-2 p-2 border border-gray-300 rounded w-full"
                 required
