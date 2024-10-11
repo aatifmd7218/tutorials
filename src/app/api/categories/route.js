@@ -20,7 +20,7 @@ export async function GET() {
 // POST Handler: Add New Category
 export async function POST(request) {
   try {
-    const { name, slug, isActive } = await request.json();
+    const { name, slug, isActive, title, description } = await request.json();
 
     if (!name || !slug) {
       return NextResponse.json(
@@ -44,6 +44,8 @@ export async function POST(request) {
     const newCategory = await prisma.category.create({
       data: {
         name,
+        title,
+        description,
         slug,
         isActive,
       },

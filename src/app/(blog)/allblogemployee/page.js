@@ -9,7 +9,7 @@ export default function Page() {
     return <div></div>;
   }
 
-  if (!session || session.user.name !== "employee") {
+  if (!session || session.user.userRole !== "employee") {
     return <div>Access Denied</div>;
   }
   return (

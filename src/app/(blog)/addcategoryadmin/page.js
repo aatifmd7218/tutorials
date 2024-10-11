@@ -1,9 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
+import { Description } from "@headlessui/react/dist/components/description/description";
 
 const Page = () => {
   const [categoryName, setCategoryName] = useState("");
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
   const [formSubmitted, setFormSubmitted] = useState(false);
 
   const { data: session, status } = useSession();
@@ -35,6 +38,8 @@ const Page = () => {
         },
         body: JSON.stringify({
           name: categoryName,
+          title,
+          description,
           slug,
           isActive,
         }),
@@ -82,6 +87,36 @@ const Page = () => {
                 required
               />
             </div>
+
+            <div className="mt-6">
+              <label htmlFor="category" className="text-gray-700">
+                Title
+              </label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="mt-2 p-2 border border-gray-300 rounded w-full"
+                required
+              />
+            </div>
+            <div className="mt-6">
+              <label htmlFor="category" className="text-gray-700">
+                Description
+              </label>
+              <input
+                type="text"
+                id="description"
+                name="description"
+                value={desc}
+                onChange={(e) => setDescription(e.target.value)}
+                className="mt-2 p-2 border border-gray-300 rounded w-full"
+                required
+              />
+            </div>
+
 
             <div className="flex justify-end">
               <button

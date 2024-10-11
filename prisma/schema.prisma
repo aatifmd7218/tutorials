@@ -110,10 +110,12 @@ model TutorialSubtopicLive {
 }
 
 model Category {
-  id        Int             @id @default(autoincrement())
-  name      String          @unique
-  slug      String   @unique
-  isActive  Boolean  @default(true)
-  blogs     Blogt[]         @relation("BlogCategory") // Relation to Blogt
-  blogslive Bloglivet[]      @relation("BlogLiveCategory") // Relation to Bloglivet
+  id            Int             @id @default(autoincrement())
+  name          String          @unique
+  title         String
+  description   String
+  slug          String   @unique
+  isActive      Boolean  @default(true)
+  blogs         Blogt[]         @relation("BlogCategory") // Relation to Blogt
+  blogslive     Bloglivet[]      @relation("BlogLiveCategory") // Relation to Bloglivet
 }
