@@ -5,53 +5,65 @@ const prisma = new PrismaClient();
 
 export const dynamic = "force-dynamic";
 
-export async function POST(req, res) {
+export async function POST(req) {
   try {
     const body = await req.json();
     let { employeeId } = body;
 
     employeeId = parseInt(employeeId);
 
-    const blogs = await prisma.$queryRaw`
-    SELECT *
-    FROM (
-      SELECT
-        b.id,
-        b.title,
-        b.description,
-        b.content,
-        b.image,
-        b.slug,
-        b.published,
-        b.delete_request,
-        b.author_id,
-        b.bloglive_id,
-        b.featuredpost
-      FROM public."Blogt" b
-      WHERE b.author_id = ${employeeId}
-    
-      UNION ALL
-    
-      SELECT
-        bl.id,
-        bl.title,
-        bl.description,
-        bl.content,
-        bl.image,
-        bl.slug,
-        bl.published,
-        bl.delete_request,
-        bl.author_id,
-        null,
-        bl.featuredpost
-      FROM public."Bloglivet" bl
-      LEFT JOIN public."Blogt" b ON bl.id = b.bloglive_id
-      WHERE bl.author_id = ${employeeId} and b.bloglive_id IS NULL
-    ) AS combined
-    ORDER BY title;
-    `;
+    // Fetch blogs from the Blogt table
+    const blogsFromBlogt = await prisma.blogt.findMany({
+      where: {
+        author_id: employeeId,
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        content: true,
+        image: true,
+        slug: true,
+        published: true,
+        publishDate: true,
+        delete_request: true,
+        author_id: true,
+        bloglive_id: true,
+        featuredpost: true,
+      },
+    });
 
-    return NextResponse.json({ result: blogs }, { status: 200 });
+    // Fetch blogs from the Bloglivet table that are not linked in Blogt
+    const blogsFromBloglivet = await prisma.bloglivet.findMany({
+      where: {
+        author_id: employeeId,
+        id: {
+          notIn: blogsFromBlogt
+            .map((blog) => blog.bloglive_id)
+            .filter((id) => id !== null),
+        },
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        content: true,
+        image: true,
+        slug: true,
+        published: true,
+        publishDate: true,
+        delete_request: true,
+        author_id: true,
+        featuredpost: true,
+      },
+    });
+
+    // Combine and sort the results by title
+    const combinedBlogs = [...blogsFromBlogt, ...blogsFromBloglivet].sort(
+      (a, b) => a.title.localeCompare(b.title)
+    );
+
+    return NextResponse.json({ result: combinedBlogs }, { status: 200 });
   } catch (error) {
     console.error("Error during blog fetching:", error);
     return NextResponse.json(

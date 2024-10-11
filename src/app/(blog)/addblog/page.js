@@ -166,7 +166,7 @@ const AddBlog = () => {
         formData.append("featuredPost", featuredPost);
         formData.append("categoryId", selectedCategory);
         formData.append("categoryName", categoryName);
-        
+
         const response = await fetch("/api/addblog", {
           method: "POST",
           body: formData,

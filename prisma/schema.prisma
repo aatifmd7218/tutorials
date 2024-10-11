@@ -27,42 +27,45 @@ model Usert {
 }
 
 model Blogt {
-  id             Int      @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   title          String
   description    String?
   slug           String
-  content        String?  @db.Text
+  content        String?      @db.Text
   image          String? 
-  published      String   @default("pending")
+  published      String       @default("pending")
   publishDate    DateTime
   scheduledAt    DateTime?
-  delete_request String? // Make sure this field exists
-  createdAt      DateTime @default(now())
-  author         Usert    @relation("UserToBlogt", fields: [author_id], references: [id])
+  delete_request String?
+  createdAt      DateTime     @default(now())
+  author         Usert        @relation("UserToBlogt", fields: [author_id], references: [id])
   author_id      Int
+  bloglive       Bloglivet?   @relation("BlogtToBloglivet", fields: [bloglive_id], references: [id])
   bloglive_id    Int?
   featuredpost   String
-  category       Category  @relation("BlogCategory", fields: [category_id], references: [id]) // New category relation
+  category       Category     @relation("BlogCategory", fields: [category_id], references: [id])
   category_id    Int 
 }
 
 model Bloglivet {
-  id             Int      @id @default(autoincrement())
+  id             Int          @id @default(autoincrement())
   title          String
   description    String?
   slug           String
-  content        String?  @db.Text
+  content        String?      @db.Text
   image          String? 
   published      String
   publishDate    DateTime
-  createdAt      DateTime @default(now())
-  author         Usert    @relation("UserToBloglivet", fields: [author_id], references: [id])
+  createdAt      DateTime     @default(now())
+  author         Usert        @relation("UserToBloglivet", fields: [author_id], references: [id])
   author_id      Int
+  blogt          Blogt[]      @relation("BlogtToBloglivet")
   featuredpost   String
-  category       Category  @relation("BlogLiveCategory", fields: [category_id], references: [id]) // New category relation
+  category       Category     @relation("BlogLiveCategory", fields: [category_id], references: [id])
   category_id    Int
   delete_request String?   
 }
+
 
 model Favicont {
   id    Int     @id @default(autoincrement())
@@ -112,6 +115,8 @@ model TutorialSubtopicLive {
 model Category {
   id        Int             @id @default(autoincrement())
   name      String          @unique
+  title         String
+  description   String
   slug      String   @unique
   isActive  Boolean  @default(true)
   blogs     Blogt[]         @relation("BlogCategory") // Relation to Blogt
