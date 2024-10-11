@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
-import { Description } from "@headlessui/react/dist/components/description/description";
+
 
 const Page = () => {
   const [categoryName, setCategoryName] = useState("");
