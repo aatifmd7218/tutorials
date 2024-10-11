@@ -166,7 +166,7 @@ const AddBlog = () => {
         formData.append("featuredPost", featuredPost);
         formData.append("categoryId", selectedCategory);
         formData.append("categoryName", categoryName);
-        
+
         const response = await fetch("/api/addblog", {
           method: "POST",
           body: formData,
@@ -189,6 +189,7 @@ const AddBlog = () => {
         setSelectedUserName(isAdmin ? "" : session.user.username);
         setSelectedCategory("");
         router.push("/allblogadmin");
+        // env change
         setFormSubmitted(false);
       }, 1500);
     } catch (error) {
