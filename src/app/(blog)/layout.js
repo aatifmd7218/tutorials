@@ -5,6 +5,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import { Montserrat } from "next/font/google";
 import { useEffect, useState } from "react";
 import SideNav from "@/components/sidebar/SideNav";
+import AdminNavbar from "@/components/Navbar/AdminNavbar";
 
 const montserrat = Montserrat({
   weight: ["300", "400"],
@@ -40,7 +41,8 @@ export default function BlogLayout({ children }) {
       </head>
       <body className={montserrat.className} suppressHydrationWarning={true}>
         <AuthProviders>
-          <div className="md:flex m-12">
+          <AdminNavbar />
+          <div className="md:flex m-12 my-24">
             <div className="w-full sm:w-2/5 lg:w-1/5">
               <SideNav />
             </div>
