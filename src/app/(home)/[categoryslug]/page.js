@@ -36,7 +36,7 @@ const slugPage = ({ params }) => {
 
   return (
     <main>
-      <BlogPage blogData={blogs} />
+      <BlogPage data={blogs} type="category" />
     </main>
   );
 };
