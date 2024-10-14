@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import md5 from "md5";
-import fs, { writeFile } from "fs";
-import path from "path";
 import fetch from "node-fetch";
 import { put } from "@vercel/blob";
 
@@ -64,22 +62,55 @@ export async function POST(req, res) {
 
   if (apiName === "addemployee") {
     try {
-      const { username, authorName, email, password } = body;
+      const username = data.get("username");
+      const authorName = data.get("authorName");
+      const email = data.get("email");
+      const password = data.get("password");
+      const authorDetail = data.get("authorDetail");
+      const image = data.get("image");
+
+      if (!password) {
+        throw new Error("Password is required");
+      }
 
       const hashedPassword = md5(password);
+      let newAuthor;
+      let blobUrl = null;
 
-      await prisma.usert.create({
+      newAuthor = await prisma.usert.create({
         data: {
           username,
           authorName,
           email,
           password: hashedPassword,
           userRole: "employee",
+          authorDetail,
+        },
+      });
+
+      if (image && image.name) {
+        const filenameParts = image.name.split(".");
+        const fileExtension = filenameParts[filenameParts.length - 1];
+
+        const blob = await put(
+          `${authorName}-${newAuthor.id}.${fileExtension}`,
+          image,
+          {
+            access: "public",
+          }
+        );
+        blobUrl = blob.url;
+      }
+
+      await prisma.usert.update({
+        where: { id: newAuthor.id },
+        data: {
+          authorImage: blobUrl,
         },
       });
 
       return NextResponse.json(
-        { result: "successfully created employee" },
+        { result: "successfully created employee", authorId: newAuthor.id },
         { status: 200 }
       );
     } catch (error) {
@@ -133,42 +164,69 @@ export async function POST(req, res) {
     }
   } else if (apiName === "updateemployee") {
     try {
-      const { selectedId, authorName, username, email, password } = body;
+      const selectedId = data.get("selectedId");
+      const authorName = data.get("authorName");
+      const username = data.get("username");
+      const email = data.get("email");
+      const password = data.get("password");
+      const authorDetail = data.get("authorDetail");
+      
 
-      if (username !== "") {
-        await prisma.usert.update({
-          where: { id: selectedId },
-          data: {
-            username,
-          },
-        });
+      const image = data.get("image");
+      const updatedData = {};
+      
+      const id = parseInt(selectedId, 10);
+      if (isNaN(id)) {
+        return NextResponse.json(
+          { error: "Invalid Employee ID" },
+          { status: 400 }
+        );
+      }
+      // console.log("selectedID : ",id, "Type of selectedId: ", typeof id);
+
+      if (username) {
+        updatedData.username = username;
       }
 
-      if (authorName !== "") {
-        await prisma.usert.update({
-          where: { id: selectedId },
-          data: {
-            authorName,
-          },
-        });
+      if (authorName) {
+        updatedData.authorName = authorName;
       }
 
-      if (email !== "") {
-        await prisma.usert.update({
-          where: { id: selectedId },
-          data: {
-            email,
-          },
-        });
+      if (email) {
+        updatedData.email = email;
       }
 
-      if (password !== "") {
+      if (password) {
         const hashedPassword = md5(password);
+        updatedData.password = hashedPassword;
+      }
 
+      if (authorDetail) {
+        updatedData.authorDetail = authorDetail;
+      }
+      await prisma.usert.update({
+        where: { id: id },
+        data: updatedData,
+      });
+
+      if (image && image.name) {
+        const filenameParts = image.name.split(".");
+        const fileExtension = filenameParts[filenameParts.length - 1];
+
+        // Upload image to Vercel Blob storage
+        const blob = await put(
+          `${authorName}-${selectedId}.${fileExtension}`,
+          image,
+          {
+            access: "public",
+          }
+        );
+
+        // Update the author entry with the image URL
         await prisma.usert.update({
           where: { id: selectedId },
           data: {
-            password: hashedPassword,
+            authorImage: blob.url,
           },
         });
       }
@@ -414,10 +472,7 @@ export async function POST(req, res) {
         { status: 500 }
       );
     }
-  }
-
-  
-  else if (apiName === "addfavicon") {
+  } else if (apiName === "addfavicon") {
     const image = data.get("image");
     if (typeof image === "object") {
       const favicon = await prisma.favicont.findFirst();

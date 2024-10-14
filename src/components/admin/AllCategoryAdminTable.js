@@ -9,6 +9,8 @@ import Link from "next/link";
 const AllCategoryAdminTable = () => {
   const [categoriesData, setCategoriesData] = useState([]);
   const [categoryName, setCategoryName] = useState("");
+  const [categoryTitle, setCategoryTile] = useState("");
+  const [categoryDescription, setCategoryDescription] = useState("")
   const [selectedId, setSelectedId] = useState(null);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [error, setError] = useState("");
@@ -94,6 +96,8 @@ const AllCategoryAdminTable = () => {
   const handleEdit = (row) => {
     setSelectedId(row.original.id);
     setCategoryName(row.original.name);
+    setCategoryTile(row.original.title);
+    setCategoryDescription(row.original.description)
     document.getElementById("edit_modal").showModal();
   };
 
@@ -135,7 +139,10 @@ const AllCategoryAdminTable = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ name: categoryName }),
+        body: JSON.stringify({ 
+          name: categoryName,
+          description: categoryDescription,
+          title: categoryTitle }),
       });
 
       if (!response.ok) {
@@ -207,6 +214,25 @@ const AllCategoryAdminTable = () => {
                 type="text"
                 value={categoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
+                required
+                className="input input-bordered w-full mt-1"
+              />
+            </label>
+            <label className="block mb-2">
+              <span className="text-gray-700">Title</span>
+              <input
+                type="text"
+                value={categoryTitle}
+                onChange={(e) => setCategoryTile(e.target.value)}
+                required
+                className="input input-bordered w-full mt-1"
+              />
+            </label><label className="block mb-2">
+              <span className="text-gray-700">Description</span>
+              <input
+                type="text"
+                value={categoryDescription}
+                onChange={(e) => setCategoryDescription(e.target.value)}
                 required
                 className="input input-bordered w-full mt-1"
               />

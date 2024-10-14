@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { featuredPostsData } from "./featuredPostsData";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -76,7 +75,7 @@ export default function FeaturedPosts() {
                 <div className="card-zoom bg-red-100 w-full h-[100px] rounded-lg">
                   <div className="card-zoom-image">
                     {blog.image && imageData[blog.id] && (
-                      <Link prefetch={false} href={`blog/${blog.slug}`}>
+                      <Link prefetch={false} href={`${blog.slug}`}>
                         <Image
                           src={imageData[blog.id]}
                           alt="img"
@@ -90,7 +89,7 @@ export default function FeaturedPosts() {
               </div>
               <div className="col-span-2">
                 <div className="flex flex-col justify-start items-start pl-2 space-y-4">
-                  <Link prefetch={false} href={`blog/${blog.slug}`}>
+                  <Link prefetch={false} href={`${blog.slug}`}>
                     <h1 className="text-gray-800 hover:text-red-600 hover:underline text-md font-bold">
                       {blog.title}
                     </h1>

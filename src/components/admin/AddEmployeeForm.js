@@ -2,12 +2,26 @@ import React, { useState } from "react";
 
 const AddEmployeeForm = () => {
   const [username, setUsername] = useState();
-  const [authorName, setAuthorName] = useState()
+  const [authorName, setAuthorName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
   const [confirmpassword, setConfirmPassword] = useState();
+  const [authorDetail, setauthorDetail] = useState();
   const [formSubmitted, setFormSubmitted] = useState();
   const [toastMessage, setToastMessage] = useState();
+  const [image, setImage] = useState(null);
+  const [imageName, setImageName] = useState("");
+
+  const handleImageChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setImage(selectedFile);
+      setImageName(selectedFile.name);
+    } else {
+      setImage(null);
+      setImageName("");
+    }
+  };
 
   const handleAddEmployee = async (e) => {
     try {
@@ -18,18 +32,20 @@ const AddEmployeeForm = () => {
       let error, result;
 
       if (password === confirmpassword) {
+        const formData = new FormData();
+        formData.append("apiName", "addemployee");
+        formData.append("username", username);
+        formData.append("authorName", authorName);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("authorDetail", authorDetail);
+        if (image) {
+          formData.append("image", image); 
+        }
+
         const response = await fetch("/api/combinedapi", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            apiName: "addemployee",
-            username,
-            authorName,
-            email,
-            password,
-          }),
+          body: formData,
         });
 
         ({ error, result } = await response.json());
@@ -42,6 +58,9 @@ const AddEmployeeForm = () => {
             setEmail("");
             setPassword("");
             setConfirmPassword("");
+            setauthorDetail("");
+            setImage(null); // Reset image
+            setImageName("");
             setFormSubmitted(false);
           }, 3000);
         }
@@ -55,10 +74,13 @@ const AddEmployeeForm = () => {
         setToastMessage("Password and Confirm Password does not match");
         setTimeout(() => {
           setUsername("");
-          setAuthorName("")
+          setAuthorName("");
           setEmail("");
           setPassword("");
           setConfirmPassword("");
+          setauthorDetail("");
+          setImage(null); // Reset image
+          setImageName("");
           setFormSubmitted(false);
           setToastMessage("");
         }, 3000);
@@ -145,6 +167,38 @@ const AddEmployeeForm = () => {
                   placeholder="password"
                   className="input input-bordered w-full  placeholder-gray-500"
                 />
+              </label>
+              <div className="label">
+                <span className="label-text font-bold ">Upload Image</span>
+              </div>
+              <label
+                htmlFor="image"
+                className="p-2 border form-control w-full border-gray-300 cursor-pointer text-gray-500 hover:text-blue-700"
+              >
+                <span>{imageName ? imageName : "Upload Blog Image"}</span>
+                <input
+                  type="file"
+                  id="image"
+                  name="image"
+                  onChange={handleImageChange}
+                  className="hidden mt-2 "
+                />
+              </label>
+              <label className="form-control w-full ">
+                <div className="label">
+                  <span className="label-text font-bold ">
+                    Detail of Author
+                  </span>
+                </div>
+                <textarea
+                  id="detail"
+                  name="detail"
+                  value={authorDetail}
+                  onChange={(e) => setauthorDetail(e.target.value)}
+                  className="textarea textarea-bordered placeholder-gray-500"
+                  placeholder="Author detial"
+                  required
+                ></textarea>
               </label>
               <div className="flex justify-end col-span-2 mt-3">
                 <button
