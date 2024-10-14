@@ -84,6 +84,11 @@ const nextConfig = {
         hostname: "tzafjtp2uu0yirew.public.blob.vercel-storage.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "images-blob.public.blob.vercel-storage.com",
+        port: "",
+      },
     ],
   },
 
