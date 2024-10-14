@@ -20,6 +20,8 @@ model Usert {
   password    String
   userRole    String
   authorName  String
+  authorDetail String?
+  authorImage String?
   blocked     String?
   blogs       Blogt[]         @relation("UserToBlogt")
   blogslive   Bloglivet[]     @relation("UserToBloglivet")

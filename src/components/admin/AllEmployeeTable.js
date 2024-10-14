@@ -10,10 +10,12 @@ const AllEmployeeTable = () => {
   const [authorName, setAuthorName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [authorDetail, setauthorDetail] = useState("");
   const [confirmpassword, setConfirmPassword] = useState("");
   const [selectedId, setSelectedId] = useState();
   const [formSubmitted, setFormSubmitted] = useState();
   const [empBlogCount, setEmpBlogCount] = useState();
+  const [image, setImage] = useState(null);
   const columns = useMemo(
     () => [
       {
@@ -36,7 +38,6 @@ const AllEmployeeTable = () => {
           </div>
         ),
       },
-
 
       {
         accessorKey: "email",
@@ -108,6 +109,16 @@ const AllEmployeeTable = () => {
     setUsername(row.original.username);
     setAuthorName(row.original.authorName);
     setEmail(row.original.email);
+    setauthorDetail(row.original.authorDetail);
+    setImage(null);
+    // console.log("selectedID : ", selectedId, "Type of selectedId: ", typeof selectedId); 
+
+  };
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImage(file);
+    }
   };
 
   const handleEmployeeUpdate = async (e) => {
@@ -126,19 +137,21 @@ const AllEmployeeTable = () => {
           return;
         }
 
+        const formData = new FormData(); // Create a FormData object
+        formData.append("apiName", "updateemployee");
+        formData.append("selectedId", selectedId);
+        formData.append("username", username);
+        formData.append("authorName", authorName);
+        formData.append("email", email);
+        formData.append("password", password);
+        formData.append("authorDetail", authorDetail);
+        if (image) {
+          formData.append("image", image); // Append the image file if available
+        }
+
         const response = await fetch("/api/combinedapi", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            apiName: "updateemployee",
-            selectedId,
-            username,
-            authorName,
-            email,
-            password,
-          }),
+          body: formData,
         });
 
         const { error, result } = await response.json();
@@ -292,10 +305,35 @@ const AllEmployeeTable = () => {
               className="input input-bordered w-full placeholder-gray-500"
             />
           </label>
+          <label className="form-control w-full">
+            <div className="label">
+              <span className="label-text">Upload Image</span>
+            </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="input input-bordered w-full placeholder-gray-500"
+            />
+          </label>
+
+          <label className="form-control w-full ">
+            <div className="label">
+              <span className="label-text font-bold ">Detail of Author</span>
+            </div>
+            <textarea
+              id="detail"
+              name="detail"
+              value={authorDetail}
+              onChange={(e) => setauthorDetail(e.target.value)}
+              className="textarea textarea-bordered placeholder-gray-500"
+              placeholder="Author detial"
+              required
+            ></textarea>
+          </label>
 
           <div className="modal-action">
             <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
               <button
                 onClick={handleEmployeeUpdate}
                 className="btn mr-4 bg-[#dc2626] hover:bg-[#dc2626] text-white"
@@ -322,7 +360,6 @@ const AllEmployeeTable = () => {
           )}
           <div className="modal-action">
             <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
               <button
                 onClick={deleteEmployee}
                 className="btn mr-4 bg-[#dc2626] hover:bg-[#dc2626] text-white"
