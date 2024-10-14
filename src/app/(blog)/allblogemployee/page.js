@@ -10,13 +10,10 @@ export default function Page() {
   }
   console.log(session)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 18538621d66e387bb36a41c071cbfa57365473da
   if (!session || session.user.name !== "employee") {
     return <div>Access Denied</div>;
   }
+  //merge conflict
   return (
     <div>
       <AllBlogEmployeeTable />
