@@ -8,8 +8,10 @@ export default function Page() {
   if (status === "loading") {
     return <div></div>;
   }
+  console.log(session)
 
-  if (!session || session.user.userRole !== "employee") {
+
+  if (!session || session.user.name !== "employee") {
     return <div>Access Denied</div>;
   }
   return (
