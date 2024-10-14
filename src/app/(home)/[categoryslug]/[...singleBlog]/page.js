@@ -2,7 +2,7 @@
 import BlogPage from "@/components/blog/BlogPage";
 import { useEffect, useState } from "react";
 
-const singleBlog = ({ params }) => {
+const SingleBlog = ({ params }) => {
   const { singleBlog } = params;
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,4 +41,4 @@ const singleBlog = ({ params }) => {
   );
 };
 
-export default singleBlog;
+export default SingleBlog;

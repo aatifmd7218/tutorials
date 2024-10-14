@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import BlogPage from "@/components/blog/BlogPage";
 
-const slugPage = ({ params }) => {
+const SlugPage = ({ params }) => {
   const { categoryslug } = params;
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -41,4 +41,4 @@ const slugPage = ({ params }) => {
   );
 };
 
-export default slugPage;
+export default SlugPage;
