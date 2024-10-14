@@ -59,7 +59,7 @@ export default function Navbar({ setSelectedCategory }) {
     setIsDropdownOpen(!isDropdownOpen);
   };
   const handleCategorySelect = (category) => {
-    setSelectedCategory(category);
+    // setSelectedCategory(category);
     setIsDropdownOpen(false);
   };
 
@@ -130,8 +130,10 @@ export default function Navbar({ setSelectedCategory }) {
                               verticalAlign: "middle",
                               alignItems: "center", // Ensure alignment is centered
                             }}
+                            onClick={handleCategorySelect(item.label)}
                           >
                             <Link href={item.href}>
+                            
                               <b>{item.label}</b>
                             </Link>
                           </li>

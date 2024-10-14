@@ -1,21 +1,21 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import BlogPage from "@/components/blog/BlogPage";
+import { useEffect, useState } from "react";
 
-const SlugPage = ({ params }) => {
-  const { categoryslug } = params;
+const SingleBlog = ({ params }) => {
+  const { singleBlog } = params;
   const [blogs, setBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchBlogsByCategory = async () => {
+    const fetchBlogsBySlug = async () => {
       try {
         const response = await fetch(
-          `/api/getpublishedblogs?category=${categoryslug}`
+          `/api/getsingleblog?blogSlug=${singleBlog}`
         );
         const data = await response.json();
 
-        if (response.ok && Array.isArray(data.result)) {
+        if (response.ok ) {
           setBlogs(data.result); 
         } else {
           console.error("Error fetching blogs:", data.error);
@@ -27,8 +27,8 @@ const SlugPage = ({ params }) => {
       }
     };
 
-    fetchBlogsByCategory();
-  }, [categoryslug]);
+    fetchBlogsBySlug();
+  }, [singleBlog]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -36,9 +36,9 @@ const SlugPage = ({ params }) => {
 
   return (
     <main>
-      <BlogPage data={blogs} type="category" />
+      <BlogPage data={blogs} type="singleBlog" />
     </main>
   );
 };
 
-export default SlugPage;
+export default SingleBlog;
