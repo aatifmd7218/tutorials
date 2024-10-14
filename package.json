@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "postinstall": "prisma generate",
-    "vercel-build": "next build && npx prisma generate && npx prisma migrate deploy"
+    "vercel-build": "next build && npx prisma generate && npx prisma migrate deploy nodemon cron.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
@@ -40,6 +40,7 @@
     "nextjs": "^0.0.3",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
+    "nodemon": "^3.1.7",
     "npm": "^10.2.4",
     "pg": "^8.11.3",
     "postcss": "8.4.30",
